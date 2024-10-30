@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  userNum       Int            @unique //학번
+  nickname      String? //닉네임
+  name          String //이름
+  phoneNumber   String //핸드폰번호
+  email         String         @unique //이메일
+  createdAt     DateTime       @default(now()) //생성날짜
+  password      String //비번
+  userType      String         @default("student") // "developer" or "student"
+  ProfileImage  String? //프로필 사진
+  MSI_Image     String
+  status        String         @default("pending") //현재 유저 상태 pending(대기중), approved(승인), rejected(거절)
+  groups        UserGroup[] //들어간 동아리
+  ratings       Rating[] //평점
+  category      String[] //유저 선호 카테고리
+  verifications Verification[] // 인증 정보 (1대 다 관계)
+  createdGroup  Group[] //사용자가 관리자인 동아리들
+  answers       GroupAnswer[] // 유저가 작성한 동아리 질문에 대한 답변
+}
+
+model Verification {
+  id                 Int      @id @default(autoincrement())
+  user               User     @relation(fields: [userId], references: [id])
+  userId             Int
+  verificationImage  String // 인증을 위해 업로드한 이미지 경로
+  verificationStatus String   @default("pending") // 'pending'(대기중), 'approved'(수락), 'rejected'(거절)
+  createdAt          DateTime @default(now()) // 인증 신청 날짜
+}
+
+model Group {
+  id            Int             @id @default(autoincrement()) //동아리 고유 번호
+  name          String          @unique //동아리 이름
+  createdAt     DateTime        @default(now()) //생성날짜
+  category      String //분류
+  description   String //설명
+  GroupImage    String //그룹 이미지
+  tags          String[] //태그
+  isOfficial    Boolean //공식vs 비공식 동아리 (기본적으로 비공식)
+  createdBy     User            @relation(fields: [createdById], references: [id]) //동아리 회장 누군지 알려주기
+  createdById   Int // 외래키로 사용할 userId
+  members       UserGroup[] //동아리 가입한 유저 배열
+  ratings       Rating[] //평점,후기
+  groupQuestion GroupQuestion[] //동아리 신청 문항들
+  answers       GroupAnswer[] // 동아리 가입에 대한 답변들
+}
+
+model UserGroup {
+  id       Int      @id @default(autoincrement())
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  group    Group    @relation(fields: [groupId], references: [id])
+  groupId  Int
+  joinDate DateTime @default(now())
+  role     String // 동아리 내 역할 (회원, 개설자)
+  status   String   @default("pending") // 최종 가입 상태 (pending(보류), approved(수락), rejected(거절)
+
+  //answers   GroupAnswer[]  // 해당 신청에 대한 모든 질문의 답변들 (고민중)
+}
+
+model Rating {
+  ratingId    Int    @id @default(autoincrement())
+  ratingScore Int // 1~5점
+  review      String //후기 문구
+  user        User   @relation(fields: [userId], references: [id])
+  userId      Int
+  group       Group  @relation(fields: [groupId], references: [id])
+  groupId     Int
+}
+
+model GroupQuestion {
+  id           Int           @id @default(autoincrement())
+  questionText String
+  createdAt    DateTime      @default(now())
+  group        Group         @relation(fields: [groupId], references: [id])
+  groupId      Int
+  answers      GroupAnswer[] // 질문에 대한 답변 (1대다 관계)
+}
+
+model GroupAnswer {
+  id         Int           @id @default(autoincrement())
+  answerText String
+  createdAt  DateTime      @default(now())
+  group      Group         @relation(fields: [groupId], references: [id])
+  groupId    Int
+  user       User          @relation(fields: [userId], references: [id])
+  userId     Int
+  question   GroupQuestion @relation(fields: [questionId], references: [id]) // 답변 대상 질문
+  questionId Int
+}

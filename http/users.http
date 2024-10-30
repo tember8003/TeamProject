@@ -1,0 +1,82 @@
+//정상 데이터 + (이미지 파일은 VSCODE로 추가 못함. 나중에 Postman으로 테스트할 예정)
+
+//지금 테스트는 multipart/form-data 로 진행할 수 없기에 application/json로 대체함.
+// -> 훗날 Postman으로 테스트할 경우엔 multipart/form-data로 진행하기
+
+
+<!--Postman으로 실험할 것이므로 이 데이터들은 이제 의미 X>
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+    "userNum":"60222143",
+	"name": "정유찬",
+	"password": "1234",
+    "nickname":"정그리우스",
+	"phoneNumber":"010-4109-1037",
+	"email":"yuchan8003@naver.com",
+	"category": ["우히히","몰라레후"]
+}
+
+###
+
+//정상 데이터 2
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+    "userNum":"60222146",
+	"name": "김예린",
+	"password": "1234",
+    "nickname":"yyyy",
+	"phoneNumber":"010-1234-5678",
+	"email":"yyyy@naver.com",
+	"category": ["안녕","반가워"]
+}
+
+###
+//필수 데이터가 빠진 경우 (ERROR)
+
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+	"name": "홍길동",
+	"password": "1234",
+    "nickname":"HONG",
+	"phoneNumber":"010-1234-5678",
+	"category": ["동길홍","홍길동"]
+}
+
+###
+
+//학번이 겹친 경우
+
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+    "userNum":"60222143",
+	"name": "홍길동",
+	"password": "1234",
+    "nickname":"HONG",
+	"phoneNumber":"010-1234-5678",
+    "email":"yuchan8003@naver.com",
+	"category": ["동길홍","홍길동"]
+}
+
+###
+//이메일이 겹치는 경우
+
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+    "userNum":"60222141",
+	"name": "홍길동",
+	"password": "1234",
+    "nickname":"HONG",
+	"phoneNumber":"010-1234-5678",
+    "email":"yuchan8003@naver.com",
+	"category": ["동길홍","홍길동"]
+}
