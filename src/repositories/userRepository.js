@@ -1,6 +1,14 @@
 import prisma from "../config/prisma.js";
 import bcrypt from 'bcrypt';
 
+async function findById(userId) {
+    return prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+    });
+}
+
 //학번으로 유저 찾기
 async function findByNum(userNum) {
     return prisma.user.findUnique({
@@ -30,15 +38,72 @@ async function createUser(userData) {
             email: userData.email,
             password: userData.password,
             ProfileImage: userData.ProfileImage,
-            phoneNumber: userData.phoneNumber,
+            MSI_Image: userData.MSI_Image,
             category: userData.category,
         },
     });
     return userInfo;
 }
 
+async function checkPassword(inputPassword, hashedPassword) { //비밀번호 확인
+    return await bcrypt.compare(inputPassword, hashedPassword);
+}
+
+//유저 개인 페이지 조회용
+async function findUserWithSelectedDataById(id) {
+    return prisma.user.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            userNum: true,
+            name: true,
+            nickname: true,
+            email: true,
+            ProfileImage: true,
+            createdAt: true,
+            category: true,
+            groups: true,
+            ratings: true
+        }
+    });
+}
+
+//유저 삭제
+async function deleteUser(userId) {
+    const deletedUser = await prisma.user.delete({
+        where: {
+            id: userId,
+        },
+    });
+
+    return deletedUser;
+}
+
+//유저 정보 수정하기
+async function updateUser(userId, userData) {
+    const existedUser = await findById(userId);
+
+    return await prisma.user.update({
+        where: {
+            id: existedUser.id,
+        },
+        data: {
+            password: userData.password || existedUser.password,
+            nickname: userData.nickname || existedUser.nickname,
+            category: userData.category || existedUser.category,
+            ProfileImage: userData.ProfileImage || existedUser.ProfileImage,
+        },
+    });
+}
+
 export default {
     findByNum,
     findByEmail,
     createUser,
+    findUserWithSelectedDataById,
+    checkPassword,
+    findById,
+    deleteUser,
+    updateUser,
 }

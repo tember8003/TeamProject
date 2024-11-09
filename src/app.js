@@ -9,11 +9,13 @@ import errorHandler from './middlewares/errorHandler.js';
 const app = express();
 
 //app.use('/api/image', ImageController);
-app.use('/api', userController);
+
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', userController);
 
 app.get('/', (req, res) => {
     res.status(201).json('Welcome');

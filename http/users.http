@@ -4,7 +4,7 @@
 // -> 훗날 Postman으로 테스트할 경우엔 multipart/form-data로 진행하기
 
 
-<!--Postman으로 실험할 것이므로 이 데이터들은 이제 의미 X>
+
 POST http://localhost:3000/api/register
 Content-Type: application/json
 
@@ -13,9 +13,38 @@ Content-Type: application/json
 	"name": "정유찬",
 	"password": "1234",
     "nickname":"정그리우스",
-	"phoneNumber":"010-4109-1037",
 	"email":"yuchan8003@naver.com",
 	"category": ["우히히","몰라레후"]
+}
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type: :application/json
+
+{
+	"userNum" : "60222143",
+	"password" : "1234"
+}
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type: :application/json
+
+{
+	"userNum" : "602221111",
+	"password" : "ddddd"
+}
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type: :application/json
+
+{
+	"userNum" : "60222143",
+	"password" : "1234"
 }
 
 ###
@@ -29,7 +58,6 @@ Content-Type: application/json
 	"name": "김예린",
 	"password": "1234",
     "nickname":"yyyy",
-	"phoneNumber":"010-1234-5678",
 	"email":"yyyy@naver.com",
 	"category": ["안녕","반가워"]
 }
@@ -44,7 +72,6 @@ Content-Type: application/json
 	"name": "홍길동",
 	"password": "1234",
     "nickname":"HONG",
-	"phoneNumber":"010-1234-5678",
 	"category": ["동길홍","홍길동"]
 }
 
@@ -60,7 +87,6 @@ Content-Type: application/json
 	"name": "홍길동",
 	"password": "1234",
     "nickname":"HONG",
-	"phoneNumber":"010-1234-5678",
     "email":"yuchan8003@naver.com",
 	"category": ["동길홍","홍길동"]
 }
@@ -76,7 +102,81 @@ Content-Type: application/json
 	"name": "홍길동",
 	"password": "1234",
     "nickname":"HONG",
-	"phoneNumber":"010-1234-5678",
     "email":"yuchan8003@naver.com",
 	"category": ["동길홍","홍길동"]
+}
+
+### 
+
+//로그인 테스트 시작------------
+POST http://localhost:3000/api/login
+Content-Type:application/json
+
+{
+	"userNum":"60222143",
+	"password":"1234"
+}
+
+### 
+
+POST http://localhost:3000/api/login
+Content-Type:application/json
+
+{
+	"userNum":"60222159",
+	"password":"1234"
+}
+
+### 
+
+POST http://localhost:3000/api/login
+Content-Type:application/json
+
+{
+	"userNum":"6199",
+	"password":"14"
+}
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type:application/json
+
+{
+	"userNum":"60222222",
+	"password":"12345"
+}
+//로그인 테스트 끝------------
+
+###
+
+//Bearer <Token> 방식
+GET http://localhost:3000/api/user_page
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlck51bSI6NjAyMjIxNTksImlhdCI6MTczMTE0ODY1MywiZXhwIjoxNzMxMTUyMjUzfQ.Nj6onvZcnB6zQsYvYByPNgGeQaj_MbL_gVHlsC1Syq0
+
+###
+
+GET http://localhost:3000/api/user_page
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlck51bSI6NjAyMjIyMjIsImlhdCI6MTczMTE1MDk1NCwiZXhwIjoxNzMxMTU0NTU0fQ.4WUPO4j8-MSFXY2U9M-d-s4gXyfn2jEZ_lCGPmiIIt0
+
+###
+
+DELETE http://localhost:3000/api/user_page
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlck51bSI6NjAyMjIyMjIsImlhdCI6MTczMTE1MDk1NCwiZXhwIjoxNzMxMTU0NTU0fQ.4WUPO4j8-MSFXY2U9M-d-s4gXyfn2jEZ_lCGPmiIIt0
+
+{
+	"password" :"1234"
+}
+
+###
+
+DELETE http://localhost:3000/api/user_page
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlck51bSI6NjAyMjIyMjIsImlhdCI6MTczMTE1MDk1NCwiZXhwIjoxNzMxMTU0NTU0fQ.4WUPO4j8-MSFXY2U9M-d-s4gXyfn2jEZ_lCGPmiIIt0
+
+{
+	"password" :"12345"
 }

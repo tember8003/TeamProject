@@ -46,6 +46,82 @@ function filterSensitiveUserData(userData, sensitiveFields = []) {
     return filteredData;
 }
 
+//개인 페이지 조회하기
+async function getUserById(id) {
+    const existedUser = await userRepository.findUserWithSelectedDataById(id);
+
+    if (!existedUser) {
+        const error = new Error('존재하지 않습니다.');
+        error.code = 404;
+        error.data = { id: id };
+        throw error;
+    }
+
+    return filterSensitiveUserData(existedUser, ['password']);
+}
+
+//로그인
+async function login(userData) {
+    // 학번으로 사용자 조회
+    const existedUser = await userRepository.findByNum(userData.userNum);
+    if (!existedUser) {
+        return { status: 401, message: '학번 혹은 비밀번호가 틀렸습니다.' };
+    }
+
+    // 비밀번호 비교
+    const isPasswordCorrect = await userRepository.checkPassword(userData.password, existedUser.password);
+    if (!isPasswordCorrect) {
+        return { status: 401, message: '학번 혹은 비밀번호가 틀렸습니다.' };
+    }
+
+    // 로그인 성공
+    return { status: 200, user: existedUser };
+}
+
+//유저 삭제하기
+async function deleteUser(userData) {
+    const existedUser = await userRepository.findById(userData.id);
+    if (!existedUser) {
+        const error = new Error('존재하지 않습니다.');
+        error.code = 404;
+        error.data = { id: id };
+        throw error;
+    }
+
+    const isPasswordCorrect = await userRepository.checkPassword(userData.password, existedUser.password);
+    if (!isPasswordCorrect) {
+        const error = new Error('비밀번호가 틀렸습니다.');
+        error.code = 401;
+        throw error;
+    }
+
+    return userRepository.deleteUser(userData.id);
+}
+
+//유저 개인 페이지 수정
+async function updateUserProfile(userId, userData) {
+    const existedUser = await userRepository.findById(userData.id);
+    if (!existedUser) {
+        const error = new Error('존재하지 않습니다.');
+        error.code = 404;
+        error.data = { id: id };
+        throw error;
+    }
+
+    if (userData.password) {
+        userData.password = await bcrypt.hash(userData.password, 10);
+    }
+
+    return await userRepository.updateUser(userId, userData);
+}
+
+
 export default {
     createUser,
+    validateEmail,
+    validateUserNumber,
+    getUserById,
+    login,
+    deleteUser,
+    updateUserProfile,
 }

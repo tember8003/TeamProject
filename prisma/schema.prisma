@@ -14,34 +14,34 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  userNum       Int            @unique //학번
-  nickname      String? //닉네임
-  name          String //이름
-  phoneNumber   String //핸드폰번호
-  email         String         @unique //이메일
-  createdAt     DateTime       @default(now()) //생성날짜
-  password      String //비번
-  userType      String         @default("student") // "developer" or "student"
-  ProfileImage  String? //프로필 사진
-  MSI_Image     String
-  status        String         @default("pending") //현재 유저 상태 pending(대기중), approved(승인), rejected(거절)
-  groups        UserGroup[] //들어간 동아리
-  ratings       Rating[] //평점
-  category      String[] //유저 선호 카테고리
-  verifications Verification[] // 인증 정보 (1대 다 관계)
-  createdGroup  Group[] //사용자가 관리자인 동아리들
-  answers       GroupAnswer[] // 유저가 작성한 동아리 질문에 대한 답변
+  id           Int           @id @default(autoincrement())
+  userNum      Int           @unique //학번
+  nickname     String? //닉네임
+  name         String //이름
+  //phoneNumber   String //핸드폰번호
+  email        String        @unique //이메일
+  createdAt    DateTime      @default(now()) //생성날짜
+  password     String //비번
+  userType     String        @default("student") // "developer" or "student"
+  ProfileImage String? //프로필 사진
+  MSI_Image    String
+  status       String        @default("pending") //현재 유저 상태 pending(대기중), approved(승인), rejected(거절)
+  groups       UserGroup[] //들어간 동아리
+  ratings      Rating[] //평점
+  category     String[] //유저 선호 카테고리
+  // verifications Verification[] // 인증 정보 (1대 다 관계)
+  createdGroup Group[] //사용자가 관리자인 동아리들
+  answers      GroupAnswer[] // 유저가 작성한 동아리 질문에 대한 답변
 }
 
-model Verification {
-  id                 Int      @id @default(autoincrement())
-  user               User     @relation(fields: [userId], references: [id])
-  userId             Int
-  verificationImage  String // 인증을 위해 업로드한 이미지 경로
-  verificationStatus String   @default("pending") // 'pending'(대기중), 'approved'(수락), 'rejected'(거절)
-  createdAt          DateTime @default(now()) // 인증 신청 날짜
-}
+//model Verification {
+//  id                 Int      @id @default(autoincrement())
+//  user               User     @relation(fields: [userId], references: [id])
+//  userId             Int
+//  verificationImage  String // 인증을 위해 업로드한 이미지 경로
+//  verificationStatus String   @default("pending") // 'pending'(대기중), 'approved'(수락), 'rejected'(거절)
+//  createdAt          DateTime @default(now()) // 인증 신청 날짜
+//}
 
 model Group {
   id            Int             @id @default(autoincrement()) //동아리 고유 번호
