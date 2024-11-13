@@ -16,9 +16,9 @@ const __dirname = path.dirname(__filename);
 
 const userController = express.Router();
 
-// 이미지 저장소 설정을 생성하는 함수
 function createMulterStorage(folderName) {
-    const uploadPath = path.join(__dirname, '..', folderName);
+    // 프로젝트 루트 경로에서 src/group 경로로 설정
+    const uploadPath = path.join(__dirname, '..', folderName); // '..'을 추가해 상위 폴더로 이동
 
     // 폴더가 존재하지 않으면 생성
     if (!fs.existsSync(uploadPath)) {
@@ -27,16 +27,21 @@ function createMulterStorage(folderName) {
 
     return multer.diskStorage({
         destination: function (req, file, callback) {
+            console.log("파일 저장 경로:", uploadPath); // 경로 확인
             callback(null, uploadPath);
         },
         filename(req, file, callback) {
-            callback(null, Date.now() + path.extname(file.originalname));
+            const fileName = Date.now() + path.extname(file.originalname);
+            console.log("파일 이름:", fileName); // 파일 이름 확인
+            callback(null, fileName);
         }
     });
 }
 
+
+
 const fileFilter = (req, file, callback) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     console.log("파일 MIME 타입:", file.mimetype);
 
     if (allowedTypes.includes(file.mimetype)) {
@@ -61,6 +66,8 @@ userController.post('/register', upload.single('MSI_Image'), async (req, res, ne
             return res.status(400).json({ message: '잘못된 요청입니다. - 필수 입력사항을 적어주세요.' });
         }
 
+        const categoryArray = Array.isArray(category) ? category : [category];
+
         console.log("Uploaded file details:", req.file);
 
         if (!req.file) {
@@ -81,7 +88,7 @@ userController.post('/register', upload.single('MSI_Image'), async (req, res, ne
             nickname: nickname || '익명',
             email,
             password,
-            category: category || [],
+            category: categoryArray || [],
             MSI_Image: MSI_ImageUrl,
             status: "pending"
         };
@@ -178,7 +185,7 @@ const uploadProfileImage = multer({
 });
 
 //유저 개인 페이지 수정
-userController.update('/user_page', authenticateToken, uploadProfileImage.single('ProfileImage'), async (req, res, next) => {
+userController.put('/user_page', authenticateToken, uploadProfileImage.single('ProfileImage'), async (req, res, next) => {
     try {
         const userId = req.user.id; // 인증된 사용자 ID 가져오기
         const { password, category, nickname } = req.body;
@@ -202,9 +209,61 @@ userController.update('/user_page', authenticateToken, uploadProfileImage.single
         return res.status(200).json({ message: '프로필이 성공적으로 업데이트되었습니다.', user: updatedUser });
 
     } catch (error) {
-
+        next(error);
     }
 });
+
+//동아리 추천 기능 + 카테고리별 동아리 목록
+userController.get('/main', authenticateToken, async (req, res, next) => {
+    try {
+        const userId = req.user.id; // 인증된 사용자 ID 가져오기
+        const recommendedGroups = await userService.getRecommendedGroups(userId);
+
+        return res.status(200).json({ groups: recommendedGroups });
+    } catch (error) {
+        next(error);
+    }
+});
+
+//유저 개인 페이지에 프로필 사진 등록하기 위해 설정
+const uploadgroupImage = multer({
+    storage: createMulterStorage('group'),
+    fileFilter: fileFilter
+});
+
+userController.post('/group_form', uploadgroupImage.single('GroupImage'), authenticateToken, async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const { name, category, description, tags } = req.body;
+
+        // `tags`가 문자열이면 배열로 변환
+        const tagsArray = Array.isArray(tags) ? tags : [tags];
+
+        console.log("req.file:", req.file);
+
+        // 업로드된 그룹 이미지 URL 생성
+        let groupImageUrl;
+        if (req.file) {
+            groupImageUrl = `${req.protocol}://${req.get('host')}/group/${req.file.filename}`;
+        }
+
+
+        const groupData = {
+            name,
+            category,
+            description,
+            tags: tagsArray,
+            GroupImage: groupImageUrl || null // 동아리 프로필 이미지 URL 저장
+        };
+
+        const group = await userService.createGroup(userId, groupData);
+
+        return res.status(200).json({ message: '동아리 신청이 완료됐습니다. 관리자가 확인 후 승인됩니다.' });
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 
 export default userController;
