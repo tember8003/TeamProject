@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id           Int           @id @default(autoincrement())
-  userNum      Int           @unique //학번
+  userNum      String        @unique //학번
   nickname     String? //닉네임
   name         String //이름
   //phoneNumber   String //핸드폰번호
@@ -56,9 +56,12 @@ model Group {
   createdBy     User            @relation(fields: [createdById], references: [id]) //동아리 회장 누군지 알려주기
   createdById   Int // 외래키로 사용할 userId
   members       UserGroup[] //동아리 가입한 유저 배열
+  memberNum     Int             @default(0)
   ratings       Rating[] //평점,후기
   groupQuestion GroupQuestion[] //동아리 신청 문항들
   answers       GroupAnswer[] // 동아리 가입에 대한 답변들
+  totalCount    Int             @default(0) //후기 개수
+  totalScore    Float           @default(0) //별점 총점
 }
 
 model UserGroup {
@@ -75,18 +78,19 @@ model UserGroup {
 }
 
 model Rating {
-  ratingId    Int    @id @default(autoincrement())
+  ratingId    Int      @id @default(autoincrement())
   ratingScore Int // 1~5점
   review      String //후기 문구
-  user        User   @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
   userId      Int
-  group       Group  @relation(fields: [groupId], references: [id])
+  group       Group    @relation(fields: [groupId], references: [id])
   groupId     Int
+  createdAt   DateTime @default(now())
 }
 
 model GroupQuestion {
   id           Int           @id @default(autoincrement())
-  questionText String
+  questionText String        @db.VarChar(255) // 질문 텍스트 길이 제한
   createdAt    DateTime      @default(now())
   group        Group         @relation(fields: [groupId], references: [id])
   groupId      Int
@@ -95,7 +99,7 @@ model GroupQuestion {
 
 model GroupAnswer {
   id         Int           @id @default(autoincrement())
-  answerText String
+  answerText String        @db.VarChar(500) // 답변 텍스트 길이 제한
   createdAt  DateTime      @default(now())
   group      Group         @relation(fields: [groupId], references: [id])
   groupId    Int

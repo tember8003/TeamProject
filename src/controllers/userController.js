@@ -41,14 +41,14 @@ function createMulterStorage(folderName) {
 
 
 const fileFilter = (req, file, callback) => {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-    console.log("파일 MIME 타입:", file.mimetype);
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    //console.log("파일 MIME 타입:", file.mimetype);
 
     if (allowedTypes.includes(file.mimetype)) {
-        console.log("허용된 파일 형식입니다.");
+        //console.log("허용된 파일 형식입니다.");
         callback(null, true);
     } else {
-        console.error("지원하지 않는 파일 형식입니다.");
+        //console.error("지원하지 않는 파일 형식입니다.");
         callback(new Error('지원하지 않는 파일 형식입니다.'), false);
     }
 };
@@ -75,7 +75,7 @@ userController.post('/register', upload.single('MSI_Image'), async (req, res, ne
         }
 
         if (/^\d+$/.test(userNum)) {
-            userNum = parseInt(userNum, 10);
+            userNum = userNum.trim();
         } else {
             return res.status(400).json({ message: 'userNum은 숫자로만 구성되어야 합니다.' });
         }
@@ -127,7 +127,6 @@ userController.post('/login', async (req, res, next) => {
         if (!/^\d+$/.test(userNum)) {
             return { status: 400, message: '학번 혹은 비밀번호가 틀렸습니다.' };
         }
-        userNum = parseInt(userNum, 10);
 
         const userData = {
             userNum,

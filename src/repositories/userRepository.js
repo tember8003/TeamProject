@@ -97,6 +97,15 @@ async function updateUser(userId, userData) {
     });
 }
 
+async function findGroupByUser(userId, groupId) {
+    return await prisma.userGroup.findUnique({
+        where: {
+            userId: userId,
+            groupId: groupId,
+        },
+    });
+}
+
 export default {
     findByNum,
     findByEmail,
@@ -106,4 +115,5 @@ export default {
     findById,
     deleteUser,
     updateUser,
+    findGroupByUser,
 }
