@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import bcrypt from 'bcrypt';
 
+//id 검색하기
 async function findById(userId) {
     return prisma.user.findUnique({
         where: {
@@ -45,6 +46,7 @@ async function createUser(userData) {
     return userInfo;
 }
 
+//비밀번호 확인하기
 async function checkPassword(inputPassword, hashedPassword) { //비밀번호 확인
     return await bcrypt.compare(inputPassword, hashedPassword);
 }
@@ -97,6 +99,7 @@ async function updateUser(userId, userData) {
     });
 }
 
+//유저가 동아리에 들어가있는지 확인하기
 async function findGroupByUser(userId, groupId) {
     return await prisma.userGroup.findUnique({
         where: {
@@ -105,6 +108,22 @@ async function findGroupByUser(userId, groupId) {
         },
     });
 }
+
+//동아리 목록 가져오기
+async function getGroup(category, orderBy) {
+    const group = await prisma.group.findMany({
+        where: {
+            category: category,
+        },
+        orderBy: orderBy || undefined,
+        select: {
+            name: true,
+            tags: true,
+        }
+    })
+    return group;
+}
+
 
 export default {
     findByNum,
@@ -116,4 +135,5 @@ export default {
     deleteUser,
     updateUser,
     findGroupByUser,
+    getGroup,
 }

@@ -64,6 +64,7 @@ async function deleteGroup(groupId) { //동아리 삭제
     return await groupRepository.deleteGroup(group.id);
 }
 
+//질문 등록하기
 async function postQuestion(questionData, userId) {
     const group = await groupRepository.findById(questionData.groupId);
 
@@ -97,6 +98,7 @@ function isUserQualifiedForReview(joinDate) {
     }
 }
 
+//후기 등록
 async function postRating(ratingData, userId) {
     const group = await groupRepository.findById(ratingData.groupId);
 
@@ -140,6 +142,74 @@ async function postRating(ratingData, userId) {
     return rating;
 }
 
+//동아리내 후기 공개/비공개 설정
+async function updateRatingPublic(userId, groupId, isRatingPublic) {
+    if (!groupId) {
+        const error = new Error('동아리 ID가 존재하지 않습니다');
+        error.code = 400; // Bad Request
+        throw error;
+    }
+
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    // 권한 확인
+    const check = await groupRepository.findByIdWithAdmin(group.id, userId);
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    const updatedGroup = await groupRepository.updateRatingPublic(groupId, isRatingPublic);
+
+    if (!updatedGroup) {
+        const error = new Error('동아리 정보를 업데이트할 수 없습니다');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    return updatedGroup;
+}
+
+//질문 불러오기
+async function getQuestions(userId, groupId) {
+    if (!groupId) {
+        const error = new Error('동아리 ID가 존재하지 않습니다');
+        error.code = 400; // Bad Request
+        throw error;
+    }
+
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    // 권한 확인
+    const check = await groupRepository.checkGroupJoin(group.id, userId);
+    if (check) {
+        const error = new Error('이미 동아리 회원입니다. 질문을 볼 수 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    const questions = await groupRepository.getQuestions(group.id);
+
+    if (!questions || questions.length === 0) {
+        return { message: '등록된 질문이 없습니다.' };
+    }
+
+    return questions;
+}
+
 
 export default {
     getInfo,
@@ -147,4 +217,6 @@ export default {
     updateGroup,
     postQuestion,
     postRating,
+    updateRatingPublic,
+    getQuestions,
 }

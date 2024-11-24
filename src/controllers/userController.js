@@ -212,13 +212,18 @@ userController.put('/user_page', authenticateToken, uploadProfileImage.single('P
     }
 });
 
-//동아리 추천 기능 + 카테고리별 동아리 목록
+//카테고리별 동아리 목록 (동아리 추천 기능 X - 제외하기로 함)
 userController.get('/main', authenticateToken, async (req, res, next) => {
     try {
-        const userId = req.user.id; // 인증된 사용자 ID 가져오기
-        const recommendedGroups = await userService.getRecommendedGroups(userId);
+        //const userId = req.user.id; // 인증된 사용자 ID 가져오기
+        //const recommendedGroups = await userService.getRecommendedGroups(userId);
 
-        return res.status(200).json({ groups: recommendedGroups });
+        const sortBy = req.query.sortBy || 'latest';
+        const category = req.query.category || 'IT';
+
+        const group = await userService.getGroup(category, sortBy);
+
+        return res.status(200).json(group);
     } catch (error) {
         next(error);
     }
@@ -230,6 +235,7 @@ const uploadgroupImage = multer({
     fileFilter: fileFilter
 });
 
+//동아리 신청하기
 userController.post('/group_form', uploadgroupImage.single('GroupImage'), authenticateToken, async (req, res, next) => {
     try {
         const userId = req.user.id;
@@ -262,7 +268,6 @@ userController.post('/group_form', uploadgroupImage.single('GroupImage'), authen
         next(error);
     }
 });
-
 
 
 export default userController;

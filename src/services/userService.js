@@ -3,6 +3,7 @@ import groupRepository from "../repositories/groupRepository.js";
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import 'dotenv/config'; // dotenv 사용
+import { get } from "http";
 
 const secretKey = process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef';
 
@@ -51,7 +52,8 @@ function decrypt(encryptedText) { //복호화
     return decrypted.toString();
 }
 
-async function createUser(userData) { //유저 생성
+//유저 생성
+async function createUser(userData) {
     await validateUserNumber(userData.userNum); //이미 있는 학번이면 Error 처리
     await validateEmail(userData.email); //이미 있는 이메일이면 Error 처리
 
@@ -132,6 +134,7 @@ async function deleteUser(userData) {
         throw error;
     }
 
+    //비밀번호 확인하기
     const isPasswordCorrect = await userRepository.checkPassword(userData.password, existedUser.password);
     if (!isPasswordCorrect) {
         const error = new Error('비밀번호가 틀렸습니다.');
@@ -151,6 +154,7 @@ async function updateUserProfile(userId, userData) {
         error.data = { id: id };
         throw error;
     }
+
 
     if (userData.password) {
         userData.password = await bcrypt.hash(userData.password, 10);
@@ -174,6 +178,7 @@ async function getRecommendedGroups(userId) {
     return recommendedGroups;
 }
 
+//동아리 만들기
 async function createGroup(userId, groupData) {
     const user = await userRepository.findById(userId);
     if (!user) {
@@ -196,6 +201,27 @@ async function createGroup(userId, groupData) {
     return await groupRepository.createGroup(userId, groupData);
 }
 
+//정렬 기준 생성
+function getOrderBy(sortBy) {
+    if (sortBy === 'latest') {
+        return { createdAt: 'desc' };
+    } else if (sortBy === 'averageScore') { //평균 별점 순서
+        return { averageScore: 'desc' };
+    } else {
+        return { createdAt: 'desc' }; // 기본 정렬: 최신순
+    }
+}
+
+//동아리 목록 가져오기
+async function getGroup(category, sortBy) {
+    const orderBy = getOrderBy(sortBy);
+
+    const group = userRepository.getGroup(category, orderBy)
+
+    return group;
+}
+
+
 
 
 export default {
@@ -208,4 +234,5 @@ export default {
     updateUserProfile,
     getRecommendedGroups,
     createGroup,
+    getGroup,
 }

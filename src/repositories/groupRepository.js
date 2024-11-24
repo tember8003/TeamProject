@@ -23,7 +23,7 @@ async function findGroupsByCategories(categories) {
 }
 
 async function getInfo(groupId) {
-    return prisma.group.findUnique({
+    const group = await prisma.group.findUnique({
         where: {
             id: groupId,
         },
@@ -36,10 +36,22 @@ async function getInfo(groupId) {
             tags: true,
             isOfficial: true,
             createdById: true,
-            ratings: true,
             memberNum: true,
+            isRatingPublic: true,
+            totalCount: true,
+            averageScore: true,
+            ratings: true, // 후기 포함
         },
     });
+
+    if (!group) return null;
+
+    // `isRatingPublic`이 false라면 `ratings`를 null로 설정
+    if (!group.isRatingPublic) {
+        group.ratings = null;
+    } //후기 데이터 가져오지 않게 만들기! (데이터베이스내 정보는 바뀌지 않음)
+
+    return group;
 }
 
 async function findByName(groupName) {
@@ -152,7 +164,46 @@ async function createRatingAndUpdateGroup(ratingData, userId, newTotalCount, new
     });
 }
 
+//후기 비공개/공개 전환
+async function updateRatingPublic(groupId, isRatingPublic) {
+    return prisma.group.update({
+        where: {
+            id: groupId,
+        },
+        data: {
+            isRatingPublic: isRatingPublic, // 공개 여부 업데이트
+        },
+        select: {
+            id: true,
+            isRatingPublic: true, // 업데이트된 공개 상태 반환
+        },
+    });
+}
 
+async function checkGroupJoin(groupId, userId) {
+    const member = await prisma.userGroup.findFirst({
+        where: {
+            groupId: groupId,
+            userId: userId,
+        },
+    });
+
+    // membership이 존재하면 true 반환, 없으면 false 반환
+    return !!member;
+}
+
+async function getQuestions(groupId) {
+    const questions = await prisma.groupQuestion.findMany({
+        where: {
+            groupId: groupId,
+        },
+        select: {
+            questionText: true,
+        },
+    });
+
+    return questions;
+}
 
 export default {
     findGroupsByCategories,
@@ -165,4 +216,7 @@ export default {
     updateGroup,
     postQuestion,
     createRatingAndUpdateGroup,
+    updateRatingPublic,
+    checkGroupJoin,
+    getQuestions,
 }

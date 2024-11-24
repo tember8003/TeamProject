@@ -44,24 +44,25 @@ model User {
 //}
 
 model Group {
-  id            Int             @id @default(autoincrement()) //동아리 고유 번호
-  name          String          @unique //동아리 이름
-  createdAt     DateTime        @default(now()) //생성날짜
-  category      String //분류
-  description   String //설명
-  GroupImage    String? //그룹 이미지
-  tags          String[] //태그
-  status        String          @default("pending") //현재 동아리 상태 pending(대기중), approved(승인), rejected(거절)
-  isOfficial    Boolean         @default(false) //공식vs 비공식 동아리 (기본적으로 비공식)
-  createdBy     User            @relation(fields: [createdById], references: [id]) //동아리 회장 누군지 알려주기
-  createdById   Int // 외래키로 사용할 userId
-  members       UserGroup[] //동아리 가입한 유저 배열
-  memberNum     Int             @default(0)
-  ratings       Rating[] //평점,후기
-  groupQuestion GroupQuestion[] //동아리 신청 문항들
-  answers       GroupAnswer[] // 동아리 가입에 대한 답변들
-  totalCount    Int             @default(0) //후기 개수
-  totalScore    Float           @default(0) //별점 총점
+  id             Int             @id @default(autoincrement()) //동아리 고유 번호
+  name           String          @unique //동아리 이름
+  createdAt      DateTime        @default(now()) //생성날짜
+  category       String //분류
+  description    String //설명
+  GroupImage     String? //그룹 이미지
+  tags           String[] //태그
+  status         String          @default("pending") //현재 동아리 상태 pending(대기중), approved(승인), rejected(거절)
+  isOfficial     Boolean         @default(false) //공식vs 비공식 동아리 (기본적으로 비공식)
+  createdBy      User            @relation(fields: [createdById], references: [id]) //동아리 회장 누군지 알려주기
+  createdById    Int // 외래키로 사용할 userId
+  members        UserGroup[] //동아리 가입한 유저 배열
+  memberNum      Int             @default(0)
+  ratings        Rating[] //평점,후기
+  groupQuestion  GroupQuestion[] //동아리 신청 문항들
+  answers        GroupAnswer[] // 동아리 가입에 대한 답변들
+  isRatingPublic Boolean         @default(true)
+  totalCount     Int             @default(0) //후기 개수
+  averageScore   Float           @default(0) //별점 총점
 }
 
 model UserGroup {
