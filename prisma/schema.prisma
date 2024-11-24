@@ -16,14 +16,14 @@ datasource db {
 model User {
   id           Int           @id @default(autoincrement())
   userNum      String        @unique //학번
-  nickname     String? //닉네임
+  nickname     String?       @default("익명") //닉네임
   name         String //이름
   //phoneNumber   String //핸드폰번호
   email        String        @unique //이메일
   createdAt    DateTime      @default(now()) //생성날짜
   password     String //비번
   userType     String        @default("student") // "developer" or "student"
-  ProfileImage String? //프로필 사진
+  //ProfileImage String? //프로필 사진
   MSI_Image    String
   status       String        @default("pending") //현재 유저 상태 pending(대기중), approved(승인), rejected(거절)
   groups       UserGroup[] //들어간 동아리

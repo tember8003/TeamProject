@@ -94,7 +94,7 @@ async function updateUser(userId, userData) {
             password: userData.password || existedUser.password,
             nickname: userData.nickname || existedUser.nickname,
             category: userData.category || existedUser.category,
-            ProfileImage: userData.ProfileImage || existedUser.ProfileImage,
+            //ProfileImage: userData.ProfileImage || existedUser.ProfileImage,
         },
     });
 }

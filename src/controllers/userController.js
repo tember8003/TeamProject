@@ -177,29 +177,33 @@ userController.delete('/user_page', authenticateToken, async (req, res, next) =>
     }
 });
 
+/*
 //유저 개인 페이지에 프로필 사진 등록하기 위해 설정
 const uploadProfileImage = multer({
     storage: createMulterStorage('profile'),
     fileFilter: fileFilter
 });
+*/
 
 //유저 개인 페이지 수정
-userController.put('/user_page', authenticateToken, uploadProfileImage.single('ProfileImage'), async (req, res, next) => {
+userController.put('/user_page', authenticateToken, async (req, res, next) => {
     try {
         const userId = req.user.id; // 인증된 사용자 ID 가져오기
         const { password, category, nickname } = req.body;
 
-        // 업로드된 프로필 이미지 URL 생성
+        /*
+        // 업로드된 프로필 이미지 URL 생성 - 프로필 사진 삭제
         let profileImageUrl;
         if (req.file) {
             profileImageUrl = `${req.protocol}://${req.get('host')}/profile/${req.file.filename}`;
         }
+        */
 
         const updateData = {
             password,
             category,
             nickname,
-            ProfileImage: profileImageUrl || null // 프로필 이미지 URL 저장
+            //ProfileImage: profileImageUrl || null // 프로필 이미지 URL 저장
         };
 
         // 프로필 정보 업데이트
