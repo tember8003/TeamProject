@@ -127,6 +127,18 @@ Content-Type:application/json
 	"password":"1234"
 }
 
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type:application/json
+
+{
+	"userNum":"60221111",
+	"password":"1234"
+}
+
+
 ### 
 
 POST http://localhost:3000/api/login
@@ -174,13 +186,13 @@ Content-Type:application/json
 //Bearer <Token> 방식
 GET http://localhost:3000/api/user_page
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlck51bSI6NjAyMjIxNTksImlhdCI6MTczMTE0ODY1MywiZXhwIjoxNzMxMTUyMjUzfQ.Nj6onvZcnB6zQsYvYByPNgGeQaj_MbL_gVHlsC1Syq0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlck51bSI6NjAyMjIxNDMsImlhdCI6MTczMTY2NjgxNywiZXhwIjoxNzMxNjcwNDE3fQ.doQnkaq1SfLMT2LNwRpStboAaX4pmqU6kucVwD0SxOA
 
 ###
 
 GET http://localhost:3000/api/user_page
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlck51bSI6NjAyMjIyMjIsImlhdCI6MTczMTE1MDk1NCwiZXhwIjoxNzMxMTU0NTU0fQ.4WUPO4j8-MSFXY2U9M-d-s4gXyfn2jEZ_lCGPmiIIt0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlck51bSI6IjYyM2JhYzU0MjI4ZTY0MTEwNWQzMjIwMWVmZjM2YWE5YTBmOTYyODA3OWI3Yjc4MjhjMDE5M2FiYjUyODc4NTciLCJpYXQiOjE3MzIxMjc3ODgsImV4cCI6MTczMjEzMTM4OH0.ZqCE68irO2ItGO3Bf1wv_h3RIKmuD4A-GoceVVIE_rY
 
 ###
 
@@ -200,4 +212,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlck51b
 
 {
 	"password" :"12345"
+}
+
+###
+
+GET http://localhost:3000/api/group/8
+Content-Type: application/json
+
+###
+
+DELETE http://localhost:3000/api/group/11
+Content-Type: application/json
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type:application/json
+
+{
+	"userNum":"60222154",
+	"password":"1234"
 }
