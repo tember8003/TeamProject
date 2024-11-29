@@ -22,7 +22,7 @@ model User {
   email        String        @unique //이메일
   createdAt    DateTime      @default(now()) //생성날짜
   password     String //비번
-  userType     String        @default("student") // "developer" or "student"
+  //userType     String        @default("student") // "developer" or "student"
   //ProfileImage String? //프로필 사진
   MSI_Image    String
   status       String        @default("pending") //현재 유저 상태 pending(대기중), approved(승인), rejected(거절)
@@ -49,6 +49,10 @@ model Group {
   createdAt      DateTime        @default(now()) //생성날짜
   category       String //분류
   description    String //설명
+  GroupRoom      String //동아리방
+  Contact        String //연락처
+  GroupTime      String //모임시간
+  period         String //모집기간
   GroupImage     String? //그룹 이미지
   tags           String[] //태그
   status         String          @default("pending") //현재 동아리 상태 pending(대기중), approved(승인), rejected(거절)
@@ -63,6 +67,7 @@ model Group {
   isRatingPublic Boolean         @default(true)
   totalCount     Int             @default(0) //후기 개수
   averageScore   Float           @default(0) //별점 총점
+  GroupActivity  GroupActivity[]
 }
 
 model UserGroup {
@@ -108,4 +113,15 @@ model GroupAnswer {
   userId     Int
   question   GroupQuestion @relation(fields: [questionId], references: [id]) // 답변 대상 질문
   questionId Int
+}
+
+model GroupActivity {
+  id          Int      @id @default(autoincrement())
+  title       String // 활동 제목
+  description String? // 활동 설명
+  createdAt   DateTime @default(now()) // 생성 날짜
+  group       Group    @relation(fields: [groupId], references: [id]) // 소속 동아리
+  groupId     Int // 외래키
+  images      String[] // 활동 이미지
+  type        String // 활동 타입 ("공지사항", "사진" 등)
 }

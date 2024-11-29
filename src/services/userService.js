@@ -62,9 +62,6 @@ async function createUser(userData) {
         userData.password = await bcrypt.hash(userData.password, 10);
     }
 
-    // 학번 해싱
-    userData.userNum = hash(userData.userNum);
-
     //이메일 암호화
     userData.email = encrypt(userData.email);
 
@@ -105,11 +102,9 @@ async function getUserById(id) {
 
 //로그인
 async function login(userData) {
-    // 입력받은 학번을 암호화
-    const hashedUserNum = hash(userData.userNum);
 
     // 암호화된 학번으로 사용자 조회
-    const existedUser = await userRepository.findByNum(hashedUserNum);
+    const existedUser = await userRepository.findByNum(userData.userNum);
     if (!existedUser) {
         return { status: 401, message: '학번 틀렸습니다.' };
     }
@@ -120,8 +115,15 @@ async function login(userData) {
         return { status: 401, message: '학번 혹은 비밀번호가 틀렸습니다.' };
     }
 
-    // 로그인 성공
-    return { status: 200, user: existedUser };
+    if (existedUser.status === "approved") { //로그인 성공
+        return { status: 200, user: existedUser };
+    } else if (existedUser.status === "pending") {
+        return { status: 403, message: '관리자 승인 대기 중입니다.' };
+    } else if (existedUser.status === "rejected") {
+        return { status: 403, message: '승인이 거절되었습니다.' };
+    } else {
+        return { status: 403, message: '유효하지 않은 유저 상태입니다.' };
+    }
 }
 
 //유저 삭제하기
@@ -195,6 +197,7 @@ async function createGroup(userId, groupData) {
         error.data = { existedName };
         throw error;
     }
+
     const uniqueTags = [...new Set(groupData.tags.map(tag => tag.trim().toLowerCase()))];
     groupData.tags = uniqueTags;
 

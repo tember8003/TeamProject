@@ -103,7 +103,7 @@ groupController.put('/:id', uploadgroupImage.single('GroupImage'), authenticateT
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
 
-        let { name, category, description, tags } = req.body;
+        let { name, category, description, tags, GroupTime, GroupRoom, period, Contact } = req.body;
 
         if (isNaN(groupId)) {
             return res.status(400).json({ error: 'Invalid group ID.' });
@@ -111,7 +111,7 @@ groupController.put('/:id', uploadgroupImage.single('GroupImage'), authenticateT
         // `tags`가 문자열이면 배열로 변환
         const tagsArray = Array.isArray(tags) ? tags : [tags];
 
-        console.log("req.file:", req.file);
+        //console.log("req.file:", req.file);
 
         // 업로드된 그룹 이미지 URL 생성
         let groupImageUrl;
@@ -125,6 +125,10 @@ groupController.put('/:id', uploadgroupImage.single('GroupImage'), authenticateT
             category,
             description,
             tags: tagsArray,
+            GroupTime,
+            GroupRoom,
+            period,
+            Contact,
             GroupImage: groupImageUrl || null // 동아리 프로필 이미지 URL 저장
         };
 
@@ -223,6 +227,55 @@ groupController.get('/:id/questions', authenticateToken, async (req, res, next) 
     } catch (error) {
         next(error);
     }
-})
+});
+
+groupController.get('/:id/active', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
+        }
+
+        const group = await groupService.getActive(userId, groupId);
+
+        return res.status(200).json(group);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// 활동내용 등록
+groupController.post('/:id/activity', authenticateToken, uploadgroupImage.array('images', 5), async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+        const { title, description, type } = req.body;
+
+        if (!title || !type) {
+            return res.status(400).json({ error: '활동 제목과 타입을 입력해주세요.' });
+        }
+
+        // 업로드된 이미지 경로 배열 생성
+        const imagePaths = req.files.map(file => `${req.protocol}://${req.get('host')}/group/${file.filename}`);
+
+        // 활동 내용 데이터 생성
+        const activityData = {
+            groupId,
+            title,
+            description,
+            images: imagePaths,
+            type
+        };
+
+        // 서비스 호출
+        const activity = await groupService.createActivity(activityData, userId);
+
+        return res.status(201).json({ message: '활동내용 등록 성공', data: activity });
+    } catch (error) {
+        next(error);
+    }
+});
 
 export default groupController;

@@ -143,11 +143,7 @@ userController.post('/login', async (req, res, next) => {
             res.status(result.status).json({ message: result.message });
         }
     } catch (error) {
-        if (error.code === 422) {
-            res.status(422).json({ message: error.message });
-        } else {
-            next(error);
-        }
+        next(error);
     }
 });
 
@@ -239,16 +235,16 @@ const uploadgroupImage = multer({
     fileFilter: fileFilter
 });
 
-//동아리 신청하기
+//동아리 등록하기
 userController.post('/group_form', uploadgroupImage.single('GroupImage'), authenticateToken, async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { name, category, description, tags } = req.body;
+        const { name, category, description, tags, GroupTime, GroupRoom, period, Contact } = req.body;
 
         // `tags`가 문자열이면 배열로 변환
         const tagsArray = Array.isArray(tags) ? tags : [tags];
 
-        console.log("req.file:", req.file);
+        //console.log("req.file:", req.file);
 
         // 업로드된 그룹 이미지 URL 생성
         let groupImageUrl;
@@ -256,12 +252,15 @@ userController.post('/group_form', uploadgroupImage.single('GroupImage'), authen
             groupImageUrl = `${req.protocol}://${req.get('host')}/group/${req.file.filename}`;
         }
 
-
         const groupData = {
             name,
             category,
             description,
             tags: tagsArray,
+            GroupTime,
+            GroupRoom,
+            period,
+            Contact,
             GroupImage: groupImageUrl || null // 동아리 프로필 이미지 URL 저장
         };
 

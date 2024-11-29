@@ -210,6 +210,57 @@ async function getQuestions(userId, groupId) {
     return questions;
 }
 
+async function getActive(groupId, userId) {
+
+    if (!groupId) {
+        const error = new Error('동아리 ID가 존재하지 않습니다');
+        error.code = 400; // Bad Request
+        throw error;
+    }
+
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    // 권한 확인
+    const check = await groupRepository.checkGroupJoin(group.id, userId);
+    if (!check) {
+        const error = new Error('동아리 회원이 아닙니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    const active = await groupRepository.getActivity(group.id);
+
+    return active;
+}
+
+// 활동내용 등록
+async function createActivity(activityData, userId) {
+    const group = await groupRepository.findById(activityData.groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    // 사용자가 동아리 회원인지 확인
+    const check = await groupRepository.checkGroupJoin(group.id, userId);
+    if (!check) {
+        const error = new Error('동아리 회원만 활동내용을 등록할 수 있습니다.');
+        error.code = 403; // Forbidden
+        throw error;
+    }
+
+    // 활동내용 등록
+    return await groupRepository.createActivity(activityData);
+}
+
 
 export default {
     getInfo,
@@ -219,4 +270,6 @@ export default {
     postRating,
     updateRatingPublic,
     getQuestions,
+    getActive,
+    createActivity,
 }

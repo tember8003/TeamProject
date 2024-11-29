@@ -77,6 +77,10 @@ async function createGroup(userId, groupData) {
             category: groupData.category,
             description: groupData.description,
             GroupImage: groupData.GroupImage, // 여기도 GroupImage로 일관성 유지
+            GroupRoom: groupData.GroupRoom,
+            GroupTime: groupData.GroupTime,
+            Contact: groupData.Contact,
+            period: groupData.period,
             tags: groupData.tags,
             isOfficial: false,
             createdBy: {
@@ -192,6 +196,7 @@ async function checkGroupJoin(groupId, userId) {
     return !!member;
 }
 
+//동아리 신청용 질문 리스트
 async function getQuestions(groupId) {
     const questions = await prisma.groupQuestion.findMany({
         where: {
@@ -203,6 +208,39 @@ async function getQuestions(groupId) {
     });
 
     return questions;
+}
+
+// 활동내용 조회
+async function getActivity(groupId) {
+    return prisma.groupActivity.findMany({
+        where: {
+            groupId,
+        },
+        orderBy: {
+            createdAt: 'desc', // 최신순 정렬
+        },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            images: true,
+            type: true,
+            createdAt: true,
+        },
+    });
+}
+
+// 활동내용 등록
+async function createActivity(activityData) {
+    return prisma.groupActivity.create({
+        data: {
+            title: activityData.title,
+            description: activityData.description,
+            images: activityData.images,
+            type: activityData.type,
+            groupId: activityData.groupId,
+        },
+    });
 }
 
 export default {
@@ -219,4 +257,6 @@ export default {
     updateRatingPublic,
     checkGroupJoin,
     getQuestions,
+    getActivity,
+    createActivity,
 }
