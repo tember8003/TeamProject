@@ -37,8 +37,6 @@ app.get('/', (req, res) => {
     console.log("welcome!");
 });
 
-
-
 app.use(errorHandler);
 
 const port = process.env.PORT ?? 3000;
