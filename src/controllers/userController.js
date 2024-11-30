@@ -219,6 +219,7 @@ userController.get('/main', authenticateToken, async (req, res, next) => {
     try {
         //const userId = req.user.id; // 인증된 사용자 ID 가져오기
         //const recommendedGroups = await userService.getRecommendedGroups(userId);
+        console.log("들어옴!!");
 
         const sortBy = req.query.sortBy || 'latest';
         const category = req.query.category || 'IT';
