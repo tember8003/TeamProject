@@ -59,6 +59,8 @@ const upload = multer({ storage: createMulterStorage('uploads'), fileFilter: fil
 userController.post('/register', upload.single('MSI_Image'), async (req, res, next) => {
     try {
         console.log("회원가입 요청");
+        console.log("요청 데이터:", req.body);
+        console.log("업로드된 파일:", req.file);
 
         let { userNum, name, nickname, email, password, category } = req.body;
 
