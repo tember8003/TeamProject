@@ -215,7 +215,7 @@ userController.put('/user_page', authenticateToken, async (req, res, next) => {
 });
 
 //카테고리별 동아리 목록 (동아리 추천 기능 X - 제외하기로 함)
-userController.get('/main', authenticateToken, async (req, res, next) => {
+userController.get('/main', async (req, res, next) => {
     try {
         //const userId = req.user.id; // 인증된 사용자 ID 가져오기
         //const recommendedGroups = await userService.getRecommendedGroups(userId);
