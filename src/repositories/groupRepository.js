@@ -124,6 +124,10 @@ async function updateGroup(groupData) {
             description: groupData.description || existedGroup.description,
             tags: groupData.tags || existedGroup.tags,
             GroupImage: groupData.GroupImage || existedGroup.GroupImage,
+            GroupTime: groupData.GroupTime || existedGroup.GroupTime,
+            GroupRoom: groupData.GroupRoom || existedGroup.GroupRoom,
+            period: groupData.period || existedGroup.period,
+            Contact: groupData.Contact || existedGroup.Contact,
         },
     });
 }

@@ -212,6 +212,7 @@ groupController.patch('/:id/rating-visibility', authenticateToken, async (req, r
     }
 });
 
+//질문 불러오기
 groupController.get('/:id/questions', authenticateToken, async (req, res, next) => {
     try {
         const groupId = parseInt(req.params.id, 10);
@@ -229,7 +230,8 @@ groupController.get('/:id/questions', authenticateToken, async (req, res, next) 
     }
 });
 
-groupController.get('/:id/active', authenticateToken, async (req, res, next) => {
+//동아리 활동내용 불러오기
+groupController.get('/:id/activity', authenticateToken, async (req, res, next) => {
     try {
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
