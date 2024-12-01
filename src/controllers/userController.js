@@ -125,6 +125,7 @@ userController.get('/user_page', authenticateToken, async (req, res, next) => {
 userController.post('/login', async (req, res, next) => {
     try {
         let { userNum, password } = req.body;
+        console.log("로그인할래요!!");
 
         if (!/^\d+$/.test(userNum)) {
             return { status: 400, message: '학번 혹은 비밀번호가 틀렸습니다.' };
@@ -140,8 +141,10 @@ userController.post('/login', async (req, res, next) => {
         if (result.status === 200) {
             // 로그인 성공 시 토큰 발행
             const token = authService.generateToken({ id: result.user.id, userNum: result.user.userNum });
+            console.log("로그인 했어요!!");
             res.status(200).json({ message: '로그인 성공', token });
         } else {
+            console.log("로그인 못했어요..");
             res.status(result.status).json({ message: result.message });
         }
     } catch (error) {
