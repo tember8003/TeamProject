@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -10,6 +11,7 @@ import errorHandler from './middlewares/errorHandler.js';
 import cors from 'cors';
 
 const app = express();
+
 
 //app.use('/api/image', ImageController);
 const __filename = fileURLToPath(import.meta.url);
