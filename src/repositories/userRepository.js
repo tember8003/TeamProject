@@ -58,15 +58,21 @@ async function findUserWithSelectedDataById(id) {
             id,
         },
         select: {
-            userNum: true,
             name: true,
             nickname: true,
             email: true,
-            ProfileImage: true,
-            createdAt: true,
-            category: true,
-            groups: true,
-            ratings: true
+            password: true,
+        }
+    });
+}
+
+async function getReviewById(id) {
+    return prisma.user.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            ratings: true,
         }
     });
 }
@@ -136,4 +142,5 @@ export default {
     updateUser,
     findGroupByUser,
     getGroup,
+    getReviewById,
 }

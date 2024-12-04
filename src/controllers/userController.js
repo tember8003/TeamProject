@@ -121,6 +121,17 @@ userController.get('/user_page', authenticateToken, async (req, res, next) => {
     }
 });
 
+userController.get('/user_page/review', authenticateToken, async (req, res, next) => {
+    try {
+        const userId = req.user.id; // 토큰에서 유저 ID 가져오기
+        const user = await userService.getReviewById(userId);
+
+        return res.status(200).json(user);
+    } catch (error) {
+        return next(error);
+    }
+})
+
 //유저 로그인하기 + 나중엔 token 값 출력X
 userController.post('/login', async (req, res, next) => {
     try {
@@ -135,6 +146,7 @@ userController.post('/login', async (req, res, next) => {
             userNum,
             password
         };
+        console.log("유효성 검사 통과, 데이터:", userData);
 
         const result = await userService.login(userData);
 
@@ -190,7 +202,7 @@ const uploadProfileImage = multer({
 userController.put('/user_page', authenticateToken, async (req, res, next) => {
     try {
         const userId = req.user.id; // 인증된 사용자 ID 가져오기
-        const { password, category, nickname } = req.body;
+        const { password, category } = req.body;
 
         /*
         // 업로드된 프로필 이미지 URL 생성 - 프로필 사진 삭제
@@ -203,7 +215,7 @@ userController.put('/user_page', authenticateToken, async (req, res, next) => {
         const updateData = {
             password,
             category,
-            nickname,
+            //nickname,
             //ProfileImage: profileImageUrl || null // 프로필 이미지 URL 저장
         };
 

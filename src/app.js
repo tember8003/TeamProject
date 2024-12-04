@@ -31,6 +31,34 @@ app.use('/profile', express.static(path.join(__dirname, 'profile')));
 app.use('/api', userController);
 app.use('/api/group', groupController);
 
+app.get('/check-files', (req, res) => {
+    const uploadsDir = path.join(__dirname, 'uploads');
+    const groupDir = path.join(__dirname, 'group');
+    const profileDir = path.join(__dirname, 'profile');
+
+    const checkDir = (dirPath) => {
+        if (fs.existsSync(dirPath)) {
+            return fs.readdirSync(dirPath);
+        } else {
+            return 'Directory does not exist';
+        }
+    };
+
+    res.json({
+        uploads: checkDir(uploadsDir),
+        group: checkDir(groupDir),
+        profile: checkDir(profileDir),
+    });
+});
+
+app.get('/download/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    if (fs.existsSync(filePath)) {
+        res.download(filePath);
+    } else {
+        res.status(404).send({ message: 'File not found' });
+    }
+});
 
 app.get('/', (req, res) => {
     res.status(201).json('Welcome');

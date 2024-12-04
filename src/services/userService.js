@@ -92,12 +92,29 @@ async function getUserById(id) {
         throw error;
     }
 
+    const user = userRepository.findUserWithSelectedDataById(existedUser.id);
     // 민감 데이터 복호화
-    const decryptedEmail = decrypt(existedUser.email);
-    existedUser.email = decryptedEmail;
+    const decryptedEmail = decrypt(user.email);
+    user.email = decryptedEmail;
 
 
-    return filterSensitiveUserData(existedUser, ['password']);
+    //return filterSensitiveUserData(user, ['password']);
+    return user;
+}
+
+//유저 후기 확인용
+async function getReviewById(id) {
+    const existedUser = await userRepository.findById(id);
+
+    if (!existedUser) {
+        const error = new Error('존재하지 않습니다.');
+        error.code = 404;
+        error.data = { id: id };
+        throw error;
+    }
+
+    const user = userRepository.getReviewById(existedUser.id);
+    return user;
 }
 
 //로그인
@@ -238,4 +255,5 @@ export default {
     getRecommendedGroups,
     createGroup,
     getGroup,
+    getReviewById,
 }
