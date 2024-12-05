@@ -33,6 +33,7 @@ app.use('/profile', express.static(path.join(__dirname, 'profile')));
 app.use('/api', userController);
 app.use('/api/group', groupController);
 
+
 app.get('/check-files', (req, res) => {
     const uploadsDir = path.join(__dirname, 'uploads');
     const groupDir = path.join(__dirname, 'group');
@@ -52,6 +53,7 @@ app.get('/check-files', (req, res) => {
         profile: checkDir(profileDir),
     });
 });
+
 
 app.get('/download/:filename', (req, res) => {
     const filePath = path.join(__dirname, 'uploads', req.params.filename);
