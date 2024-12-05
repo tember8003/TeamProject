@@ -84,7 +84,7 @@ async function createGroup(userId, groupData) {
             Contact: groupData.Contact,
             //period: groupData.period,
             //tags: groupData.tags,
-            ActiceLog: groupData.ActiceLog,
+            ActiveLog: groupData.ActiveLog,
             isOfficial: false,
             createdBy: {
                 connect: {
