@@ -267,51 +267,53 @@ userController.get('/main', async (req, res, next) => {
     }
 });
 
-//유저 개인 페이지에 프로필 사진 등록하기 위해 설정
-const uploadgroupImage = multer({
-    storage: createMulterStorage('group'),
-    fileFilter: fileFilter
+const uploadAllFiles = multer({
+    storage: createMulterStorage('uploads'),
+    fileFilter: (req, file, callback) => {
+        const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        const allowedDocumentTypes = [
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+            'application/haansofthwp' // .hwp
+        ];
+        const allowedTypes = [...allowedImageTypes, ...allowedDocumentTypes];
+
+        if (allowedTypes.includes(file.mimetype)) {
+            callback(null, true); // 허용된 파일 형식
+        } else {
+            callback(new Error('지원하지 않는 파일 형식입니다.'), false); // 허용되지 않은 파일 형식
+        }
+    }
 });
 
-//유저 개인 페이지에 프로필 사진 등록하기 위해 설정
-const uploadActiceLog = multer({
-    storage: createMulterStorage('ActiveLog'),
-    fileFilter: documentFileFilter
-});
-
-// 동아리 등록하기
 userController.post(
     '/group_form',
-    (req, res, next) => {
-        uploadgroupImage.fields([
-            { name: 'GroupImage', maxCount: 1 },
-            { name: 'IntroduceImage', maxCount: 1 }
-        ])(req, res, (err) => {
-            if (err) {
-                return next(err); // 이미지 업로드 에러 처리
-            }
-            uploadActiceLog.fields([
-                { name: 'ActiveLog', maxCount: 1 }
-            ])(req, res, next); // 문서 업로드 처리
-        });
-    },
+    uploadAllFiles.fields([
+        { name: 'GroupImage', maxCount: 1 },
+        { name: 'IntroduceImage', maxCount: 1 },
+        { name: 'ActiveLog', maxCount: 1 }
+    ]),
     authenticateToken,
     async (req, res, next) => {
         try {
             const userId = req.user.id;
             const { name, category, description, GroupTime, GroupRoom, period, Contact } = req.body;
 
-            // 업로드된 이미지 URL 생성
-            let groupImageUrl, introduceImageUrl, activeLogUrl;
-            if (req.files['GroupImage']) {
-                groupImageUrl = `${req.protocol}://${req.get('host')}/group/${req.files['GroupImage'][0].filename}`;
+            console.log("동아리 등록할래요!");
+
+            if (!name || !category || !description) {
+                return res.status(400).json({ message: '필수 필드가 누락되었습니다.' });
             }
-            if (req.files['IntroduceImage']) {
-                introduceImageUrl = `${req.protocol}://${req.get('host')}/group/${req.files['IntroduceImage'][0].filename}`;
-            }
-            if (req.files['ActiveLog']) {
-                activeLogUrl = `${req.protocol}://${req.get('host')}/group/${req.files['ActiveLog'][0].filename}`;
-            }
+
+            // 업로드된 파일 URL 생성
+            const groupImageUrl = req.files['GroupImage']
+                ? `${req.protocol}://${req.get('host')}/uploads/${req.files['GroupImage'][0].filename}`
+                : null;
+            const introduceImageUrl = req.files['IntroduceImage']
+                ? `${req.protocol}://${req.get('host')}/uploads/${req.files['IntroduceImage'][0].filename}`
+                : null;
+            const activeLogUrl = req.files['ActiveLog']
+                ? `${req.protocol}://${req.get('host')}/uploads/${req.files['ActiveLog'][0].filename}`
+                : null;
 
             const groupData = {
                 name,
@@ -321,9 +323,9 @@ userController.post(
                 GroupRoom,
                 period,
                 Contact,
-                GroupImage: groupImageUrl || null,
-                IntroduceImage: introduceImageUrl || null,
-                ActiveLog: activeLogUrl || null
+                GroupImage: groupImageUrl,
+                IntroduceImage: introduceImageUrl,
+                ActiveLog: activeLogUrl
             };
 
             const group = await userService.createGroup(userId, groupData);
