@@ -233,10 +233,17 @@ function getOrderBy(sortBy) {
 }
 
 //동아리 목록 가져오기
-async function getGroup(sortBy) {
+async function getGroup(category, sortBy) {
     const orderBy = getOrderBy(sortBy);
 
-    const group = userRepository.getGroup(orderBy)
+    let group;
+
+    if (category === 'ALL') {
+        group = userRepository.getGroup(orderBy);
+    }
+    else {
+        group = userRepository.getGroupByCategory(category, orderBy);
+    }
 
     return group;
 }
