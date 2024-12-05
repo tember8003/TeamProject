@@ -53,7 +53,9 @@ model Group {
   Contact        String //연락처
   GroupTime      String //모임시간
   period         String //모집기간
-  GroupImage     String? //그룹 이미지
+  GroupImage     String? //그룹 대표 이미지
+  IntroduceImage String? //그룹 소개 이미지
+  ActiceLog      String //활동 기록 (docx , hwp 파일)
   tags           String[] //태그
   status         String          @default("pending") //현재 동아리 상태 pending(대기중), approved(승인), rejected(거절)
   isOfficial     Boolean         @default(false) //공식vs 비공식 동아리 (기본적으로 비공식)

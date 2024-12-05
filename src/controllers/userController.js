@@ -53,6 +53,20 @@ const fileFilter = (req, file, callback) => {
     }
 };
 
+// 문서 파일 필터
+const documentFileFilter = (req, file, callback) => {
+    const allowedDocumentTypes = [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+        'application/haansofthwp' // .hwp
+    ];
+
+    if (allowedDocumentTypes.includes(file.mimetype)) {
+        callback(null, true); // 허용된 문서 형식
+    } else {
+        callback(new Error('지원하지 않는 문서 파일 형식입니다.'), false); // 허용되지 않은 문서 형식
+    }
+};
+
 const upload = multer({ storage: createMulterStorage('uploads'), fileFilter: fileFilter });
 
 // 유저 회원가입하기 (이미지와 함께 데이터 받기)
@@ -154,7 +168,13 @@ userController.post('/login', async (req, res, next) => {
             // 로그인 성공 시 토큰 발행
             const token = authService.generateToken({ id: result.user.id, userNum: result.user.userNum });
             console.log("로그인 했어요!!");
-            res.status(200).json({ message: '로그인 성공', token });
+            res.status(200).json({
+                message: '로그인 성공', token, user: {
+                    id: result.user.id,
+                    userNum: result.user.userNum,
+                    name: result.user.name
+                }
+            });
         } else {
             console.log("로그인 못했어요..");
             res.status(result.status).json({ message: result.message });
@@ -237,9 +257,9 @@ userController.get('/main', async (req, res, next) => {
         console.log("들어옴!!");
 
         const sortBy = req.query.sortBy || 'latest';
-        const category = req.query.category || 'IT';
+        //const category = req.query.category || 'IT';
 
-        const group = await userService.getGroup(category, sortBy);
+        const group = await userService.getGroup(sortBy);
 
         return res.status(200).json(group);
     } catch (error) {
@@ -253,42 +273,67 @@ const uploadgroupImage = multer({
     fileFilter: fileFilter
 });
 
-//동아리 등록하기
-userController.post('/group_form', uploadgroupImage.single('GroupImage'), authenticateToken, async (req, res, next) => {
-    try {
-        const userId = req.user.id;
-        const { name, category, description, tags, GroupTime, GroupRoom, period, Contact } = req.body;
-
-        // `tags`가 문자열이면 배열로 변환
-        const tagsArray = Array.isArray(tags) ? tags : [tags];
-
-        //console.log("req.file:", req.file);
-
-        // 업로드된 그룹 이미지 URL 생성
-        let groupImageUrl;
-        if (req.file) {
-            groupImageUrl = `${req.protocol}://${req.get('host')}/group/${req.file.filename}`;
-        }
-
-        const groupData = {
-            name,
-            category,
-            description,
-            tags: tagsArray,
-            GroupTime,
-            GroupRoom,
-            period,
-            Contact,
-            GroupImage: groupImageUrl || null // 동아리 프로필 이미지 URL 저장
-        };
-
-        const group = await userService.createGroup(userId, groupData);
-
-        return res.status(200).json({ message: '동아리 신청이 완료됐습니다. 관리자가 확인 후 승인됩니다.' });
-    } catch (error) {
-        next(error);
-    }
+//유저 개인 페이지에 프로필 사진 등록하기 위해 설정
+const uploadActiceLog = multer({
+    storage: createMulterStorage('ActiveLog'),
+    fileFilter: documentFileFilter
 });
+
+// 동아리 등록하기
+userController.post(
+    '/group_form',
+    (req, res, next) => {
+        uploadImages.fields([
+            { name: 'GroupImage', maxCount: 1 },
+            { name: 'IntroduceImage', maxCount: 1 }
+        ])(req, res, (err) => {
+            if (err) {
+                return next(err); // 이미지 업로드 에러 처리
+            }
+            uploadDocuments.fields([
+                { name: 'ActiveLog', maxCount: 1 }
+            ])(req, res, next); // 문서 업로드 처리
+        });
+    },
+    authenticateToken,
+    async (req, res, next) => {
+        try {
+            const userId = req.user.id;
+            const { name, category, description, GroupTime, GroupRoom, period, Contact } = req.body;
+
+            // 업로드된 이미지 URL 생성
+            let groupImageUrl, introduceImageUrl, activeLogUrl;
+            if (req.files['GroupImage']) {
+                groupImageUrl = `${req.protocol}://${req.get('host')}/group/${req.files['GroupImage'][0].filename}`;
+            }
+            if (req.files['IntroduceImage']) {
+                introduceImageUrl = `${req.protocol}://${req.get('host')}/group/${req.files['IntroduceImage'][0].filename}`;
+            }
+            if (req.files['ActiveLog']) {
+                activeLogUrl = `${req.protocol}://${req.get('host')}/group/${req.files['ActiveLog'][0].filename}`;
+            }
+
+            const groupData = {
+                name,
+                category,
+                description,
+                GroupTime,
+                GroupRoom,
+                period,
+                Contact,
+                GroupImage: groupImageUrl || null,
+                IntroduceImage: introduceImageUrl || null,
+                ActiveLog: activeLogUrl || null
+            };
+
+            const group = await userService.createGroup(userId, groupData);
+
+            return res.status(200).json({ message: '동아리 신청이 완료됐습니다. 관리자가 확인 후 승인됩니다.' });
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 
 export default userController;

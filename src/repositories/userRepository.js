@@ -116,11 +116,8 @@ async function findGroupByUser(userId, groupId) {
 }
 
 //동아리 목록 가져오기
-async function getGroup(category, orderBy) {
+async function getGroup(orderBy) {
     const group = await prisma.group.findMany({
-        where: {
-            category: category,
-        },
         orderBy: orderBy || undefined,
         select: {
             name: true,

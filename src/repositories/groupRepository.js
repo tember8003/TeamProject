@@ -77,11 +77,13 @@ async function createGroup(userId, groupData) {
             category: groupData.category,
             description: groupData.description,
             GroupImage: groupData.GroupImage, // 여기도 GroupImage로 일관성 유지
+            IntroduceImage: groupData.IntroduceImage,
             GroupRoom: groupData.GroupRoom,
             GroupTime: groupData.GroupTime,
             Contact: groupData.Contact,
             period: groupData.period,
-            tags: groupData.tags,
+            //tags: groupData.tags,
+            ActiceLog: groupData.ActiceLog,
             isOfficial: false,
             createdBy: {
                 connect: {
