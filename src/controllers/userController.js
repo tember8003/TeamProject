@@ -325,7 +325,7 @@ userController.post(
                 description,
                 GroupTime,
                 GroupRoom,
-                period,
+                //period,
                 Contact,
                 GroupImage: groupImageUrl,
                 IntroduceImage: introduceImageUrl,
