@@ -296,7 +296,7 @@ userController.post(
     async (req, res, next) => {
         try {
             const userId = req.user.id;
-            const { name, category, description, GroupTime, GroupRoom, period, Contact } = req.body;
+            const { name, GroupLeader, category, description, GroupTime, GroupRoom, period, Contact } = req.body;
 
             console.log("동아리 등록할래요!");
 
@@ -320,6 +320,7 @@ userController.post(
 
             const groupData = {
                 name,
+                GroupLeader,
                 category,
                 description,
                 GroupTime,

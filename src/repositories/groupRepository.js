@@ -74,6 +74,7 @@ async function createGroup(userId, groupData) {
     return prisma.group.create({
         data: {
             name: groupData.name,
+            GroupLeader: groupData.GroupLeader,
             category: groupData.category,
             description: groupData.description,
             GroupImage: groupData.GroupImage, // 여기도 GroupImage로 일관성 유지
