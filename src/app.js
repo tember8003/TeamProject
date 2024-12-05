@@ -36,22 +36,12 @@ app.use('/api/group', groupController);
 
 app.get('/check-files', (req, res) => {
     const uploadsDir = path.join(__dirname, 'uploads');
-    const groupDir = path.join(__dirname, 'group');
-    const profileDir = path.join(__dirname, 'profile');
-
-    const checkDir = (dirPath) => {
-        if (fs.existsSync(dirPath)) {
-            return fs.readdirSync(dirPath);
-        } else {
-            return 'Directory does not exist';
-        }
-    };
-
-    res.json({
-        uploads: checkDir(uploadsDir),
-        group: checkDir(groupDir),
-        profile: checkDir(profileDir),
-    });
+    if (fs.existsSync(uploadsDir)) {
+        const files = fs.readdirSync(uploadsDir);
+        res.json({ files });
+    } else {
+        res.status(404).json({ message: 'Uploads directory does not exist' });
+    }
 });
 
 
@@ -61,6 +51,16 @@ app.get('/download/:filename', (req, res) => {
         res.download(filePath);
     } else {
         res.status(404).send({ message: 'File not found' });
+    }
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    if (req.file) {
+        console.log('Uploaded file path:', req.file.path); // 파일 저장 경로 확인
+        res.status(201).json({ message: 'File uploaded successfully', file: req.file });
+    } else {
+        console.error('File upload failed');
+        res.status(400).json({ message: 'File upload failed' });
     }
 });
 
