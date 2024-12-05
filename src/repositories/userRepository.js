@@ -120,9 +120,11 @@ async function getGroup(orderBy) {
     const group = await prisma.group.findMany({
         orderBy: orderBy || undefined,
         select: {
+            id: true,
             name: true,
             description: true,
             GroupImage: true,
+            category: true
         }
     })
     return group;
@@ -135,9 +137,11 @@ async function getGroupByCategory(category, orderBy) {
         },
         orderBy: orderBy || undefined,
         select: {
+            id: true,
             name: true,
             description: true,
             GroupImage: true,
+            category: true,
         }
     })
     return group;

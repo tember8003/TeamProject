@@ -238,7 +238,7 @@ async function getGroup(category, sortBy) {
 
     let group;
 
-    if (category === 'ALL') {
+    if (category === 'all') {
         group = userRepository.getGroup(orderBy);
     }
     else {

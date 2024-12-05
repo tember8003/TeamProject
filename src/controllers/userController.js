@@ -249,6 +249,8 @@ userController.put('/user_page', authenticateToken, async (req, res, next) => {
     }
 });
 
+
+
 //카테고리별 동아리 목록 (동아리 추천 기능 X - 제외하기로 함)
 userController.get('/main', async (req, res, next) => {
     try {
@@ -257,11 +259,11 @@ userController.get('/main', async (req, res, next) => {
         console.log("들어옴!!");
 
         const sortBy = req.query.sortBy || 'latest';
-        //const category = req.query.category || 'IT';
+        const category = req.query.category || 'all';
 
-        const group = await userService.getGroup(sortBy);
+        const groups = await userService.getGroup(category, sortBy);
 
-        return res.status(200).json(group);
+        return res.status(200).json({ success: true, groups });
     } catch (error) {
         next(error);
     }
