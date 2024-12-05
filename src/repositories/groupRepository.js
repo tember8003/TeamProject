@@ -129,7 +129,7 @@ async function updateGroup(groupData) {
             GroupImage: groupData.GroupImage || existedGroup.GroupImage,
             GroupTime: groupData.GroupTime || existedGroup.GroupTime,
             GroupRoom: groupData.GroupRoom || existedGroup.GroupRoom,
-            period: groupData.period || existedGroup.period,
+            //period: groupData.period || existedGroup.period,
             Contact: groupData.Contact || existedGroup.Contact,
         },
     });
