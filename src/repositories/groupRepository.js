@@ -82,7 +82,7 @@ async function createGroup(userId, groupData) {
             GroupRoom: groupData.GroupRoom,
             GroupTime: groupData.GroupTime,
             Contact: groupData.Contact,
-            period: groupData.period,
+            //period: groupData.period,
             //tags: groupData.tags,
             ActiceLog: groupData.ActiceLog,
             isOfficial: false,
