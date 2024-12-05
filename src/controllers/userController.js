@@ -300,6 +300,9 @@ userController.post(
 
             console.log("동아리 등록할래요!");
 
+            console.log("받은 요청 데이터:", req.body);
+            console.log("업로드된 파일:", req.files);
+
             if (!name || !category || !description) {
                 return res.status(400).json({ message: '필수 필드가 누락되었습니다.' });
             }
