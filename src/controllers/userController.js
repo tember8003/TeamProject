@@ -283,14 +283,14 @@ const uploadActiceLog = multer({
 userController.post(
     '/group_form',
     (req, res, next) => {
-        uploadImages.fields([
+        uploadgroupImage.fields([
             { name: 'GroupImage', maxCount: 1 },
             { name: 'IntroduceImage', maxCount: 1 }
         ])(req, res, (err) => {
             if (err) {
                 return next(err); // 이미지 업로드 에러 처리
             }
-            uploadDocuments.fields([
+            uploadActiceLog.fields([
                 { name: 'ActiveLog', maxCount: 1 }
             ])(req, res, next); // 문서 업로드 처리
         });
@@ -328,7 +328,7 @@ userController.post(
 
             const group = await userService.createGroup(userId, groupData);
 
-            return res.status(200).json({ message: '동아리 신청이 완료됐습니다. 관리자가 확인 후 승인됩니다.' });
+            return res.status(201).json({ message: '동아리 신청이 완료됐습니다. 관리자가 확인 후 승인됩니다.' });
         } catch (error) {
             next(error);
         }
