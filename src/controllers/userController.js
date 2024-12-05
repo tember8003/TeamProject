@@ -262,7 +262,8 @@ userController.get('/main', async (req, res, next) => {
         const category = req.query.category || 'all';
 
         const groups = await userService.getGroup(category, sortBy);
-
+        console.log("동아리 목록 찾았어!");
+        console.log(groups);
         return res.status(200).json({ success: true, groups });
     } catch (error) {
         next(error);
