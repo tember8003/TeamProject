@@ -24,8 +24,8 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, callback) {
         const sanitizedFilename = Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '-');
-        console.log("파일 이름:", uniqueName); // 파일 이름 확인 로그
-        callback(null, uniqueName);
+        console.log("파일 이름:", sanitizedFilename); // 파일 이름 확인 로그
+        callback(null, sanitizedFilename);
     }
 });
 
