@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
         callback(null, uploadPath); // 저장 경로 지정
     },
     filename: function (req, file, callback) {
-        const uniqueName = Date.now() + '-' + file.originalname; // 고유 파일 이름 생성
+        const sanitizedFilename = Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '-');
         console.log("파일 이름:", uniqueName); // 파일 이름 확인 로그
         callback(null, uniqueName);
     }
@@ -87,7 +87,7 @@ userController.post('/register', upload.single('MSI_Image'), async (req, res, ne
 
         const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
 
-        const MSI_ImageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+        const MSI_ImageUrl = `${req.protocol}://${req.get('host')}/uploads/${encodeURIComponent(req.file.filename)}`;
 
         const userData = {
             userNum,
