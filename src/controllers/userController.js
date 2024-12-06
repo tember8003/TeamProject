@@ -346,15 +346,6 @@ userController.post(
     }
 );
 
-userController.get('/check-files', (req, res) => {
-    const uploadPath = path.join(__dirname, '..', 'uploads');
-    if (fs.existsSync(uploadPath)) {
-        const files = fs.readdirSync(uploadPath);
-        res.json({ files });
-    } else {
-        res.status(404).json({ message: 'Uploads directory does not exist' });
-    }
-});
 
 
 export default userController;

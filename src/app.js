@@ -54,16 +54,6 @@ app.get('/download/:filename', (req, res) => {
     }
 });
 
-app.post('/upload', upload.single('file'), (req, res) => {
-    if (req.file) {
-        console.log('Uploaded file path:', req.file.path); // 파일 저장 경로 확인
-        res.status(201).json({ message: 'File uploaded successfully', file: req.file });
-    } else {
-        console.error('File upload failed');
-        res.status(400).json({ message: 'File upload failed' });
-    }
-});
-
 app.get('/', (req, res) => {
     res.status(201).json('Welcome');
     console.log("welcome!");
