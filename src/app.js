@@ -28,14 +28,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/group', express.static(path.join(__dirname, 'group')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('/uploads'));
 app.use('/profile', express.static(path.join(__dirname, 'profile')));
 app.use('/api', userController);
 app.use('/api/group', groupController);
 
 
 app.get('/check-files', (req, res) => {
-    const uploadsDir = path.join(__dirname, 'uploads');
+    const uploadsDir = '/uploads'; // Persistent Disk 경로
     if (fs.existsSync(uploadsDir)) {
         const files = fs.readdirSync(uploadsDir);
         res.json({ files });
@@ -43,7 +43,6 @@ app.get('/check-files', (req, res) => {
         res.status(404).json({ message: 'Uploads directory does not exist' });
     }
 });
-
 
 app.get('/download/:filename', (req, res) => {
     const filePath = path.join(__dirname, 'uploads', req.params.filename);
