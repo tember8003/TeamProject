@@ -306,7 +306,7 @@ userController.post(
                 return res.status(400).json({ message: '필수 필드가 누락되었습니다.' });
             }
 
-            // 업로드된 파일 URL 생성
+            // 업로드된 파일 URL 생성 만약 잘 안되면 위 회원가입을 참고해 url을 바꿔보자!
             const groupImageUrl = req.files['GroupImage']
                 ? `${req.protocol}://${req.get('host')}/uploads/${req.files['GroupImage'][0].filename}`
                 : null;

@@ -27,9 +27,9 @@ app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/group', express.static(path.join(__dirname, 'group')));
+//app.use('/group', express.static(path.join(__dirname, 'group')));
 app.use('/uploads', express.static('/uploads'));
-app.use('/profile', express.static(path.join(__dirname, 'profile')));
+//app.use('/profile', express.static(path.join(__dirname, 'profile')));
 app.use('/api', userController);
 app.use('/api/group', groupController);
 
