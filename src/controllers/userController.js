@@ -96,7 +96,9 @@ userController.post('/register', upload.single('MSI_Image'), async (req, res, ne
             return res.status(400).json({ message: 'userNum은 숫자로만 구성되어야 합니다.' });
         }
 
-        const MSI_ImageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+
+        const MSI_ImageUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
         const userData = {
             userNum,
@@ -108,6 +110,8 @@ userController.post('/register', upload.single('MSI_Image'), async (req, res, ne
             MSI_Image: MSI_ImageUrl,
             status: "pending"
         };
+
+        console.log("업로드된 파일 경로:", req.file.path);
 
         const createdUser = await userService.createUser(userData);
         return res.status(201).json({ message: '회원가입 요청이 접수되었습니다. 관리자가 승인 후 사용할 수 있습니다.', user: createdUser });
