@@ -16,29 +16,18 @@ const __dirname = path.dirname(__filename);
 
 const userController = express.Router();
 
-function createMulterStorage(folderName) {
-    // 프로젝트 루트 경로에서 src/group 경로로 설정
-    const uploadPath = path.join(__dirname, '..', folderName); // '..'을 추가해 상위 폴더로 이동
-
-    // 폴더가 존재하지 않으면 생성
-    if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true });
+const storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        const uploadPath = '/uploads'; // Persistent Disk 경로
+        console.log("파일 저장 경로:", uploadPath); // 경로 확인 로그
+        callback(null, uploadPath); // 저장 경로 지정
+    },
+    filename: function (req, file, callback) {
+        const uniqueName = Date.now() + '-' + file.originalname; // 고유 파일 이름 생성
+        console.log("파일 이름:", uniqueName); // 파일 이름 확인 로그
+        callback(null, uniqueName);
     }
-
-    return multer.diskStorage({
-        destination: function (req, file, callback) {
-            console.log("파일 저장 경로:", uploadPath); // 경로 확인
-            callback(null, uploadPath);
-        },
-        filename(req, file, callback) {
-            const fileName = Date.now() + path.extname(file.originalname);
-            console.log("파일 이름:", fileName); // 파일 이름 확인
-            callback(null, fileName);
-        }
-    });
-}
-
-
+});
 
 const fileFilter = (req, file, callback) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -67,7 +56,7 @@ const documentFileFilter = (req, file, callback) => {
     }
 };
 
-const upload = multer({ storage: createMulterStorage('uploads'), fileFilter: fileFilter });
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 // 유저 회원가입하기 (이미지와 함께 데이터 받기)
 userController.post('/register', upload.single('MSI_Image'), async (req, res, next) => {
@@ -278,7 +267,7 @@ userController.get('/main', async (req, res, next) => {
 });
 
 const uploadAllFiles = multer({
-    storage: createMulterStorage('uploads'),
+    storage: storage,
     fileFilter: (req, file, callback) => {
         const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         const allowedDocumentTypes = [
