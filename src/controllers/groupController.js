@@ -184,6 +184,7 @@ groupController.get('/:id/clubAdmin', authenticateToken, async (req, res, next) 
 //동아리내 후기 작성 (테스트 아직 X)
 groupController.post('/:id/review', authenticateToken, async (req, res, next) => {
     try {
+        console.log("리뷰하러 왔습니다!!");
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
         const { ratingScore, review, options, date } = req.body;
@@ -212,8 +213,10 @@ groupController.post('/:id/review', authenticateToken, async (req, res, next) =>
 
         const rating = await groupService.postRating(ratingData, userId);
 
+        console.log("리뷰 성공인 거 같습니다!");
         return res.status(201).json({ message: '후기 등록 성공', data: rating });
     } catch (error) {
+        console.log("리뷰 실패했습니다..");
         next(error);
     }
 });

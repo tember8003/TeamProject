@@ -111,6 +111,7 @@ async function postRating(ratingData, userId) {
     const groupUser = await userRepository.findGroupByUser(group.id, userId);
 
     if (!groupUser) {
+        console.log("동아리 등록 에러!");
         const error = new Error('해당 동아리에 등록되어 있지 않습니다');
         error.code = 403; // 권한 X
         throw error;
@@ -122,6 +123,7 @@ async function postRating(ratingData, userId) {
 
     //만약 4개월 이상 안됐으면 에러
     if (!isQualified) {
+        console.log("4개월 안됐습니다!");
         const error = new Error('동아리에 4개월 이상 다닌 회원만 후기를 작성할 수 있습니다.');
         error.code = 403; // Forbidden
         throw error;
