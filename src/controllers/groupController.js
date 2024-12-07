@@ -251,7 +251,7 @@ groupController.get('/:id/activity', authenticateToken, async (req, res, next) =
 });
 
 // 활동내용 등록
-groupController.post('/:id/activity', authenticateToken, uploadgroupImage.array('images', 5), async (req, res, next) => {
+groupController.post('/:id/activity', authenticateToken, uploadAllFiles.array('images', 5), async (req, res, next) => {
     try {
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
