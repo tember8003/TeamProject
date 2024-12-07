@@ -111,12 +111,13 @@ async function deleteGroup(groupId) {
 
 //동아리 개설자인지 확인
 async function findByIdWithAdmin(groupId, userId) {
-    return prisma.group.findFirst({
+    const group = prisma.group.findFirst({
         where: {
             id: groupId,
             createdById: userId, // 동아리 생성자 확인
         },
     });
+    return !!group; // `null`을 `false`로 변환
 }
 
 //동아리 수정
