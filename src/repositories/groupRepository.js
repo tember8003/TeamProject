@@ -230,7 +230,7 @@ async function getQuestions(groupId) {
 async function getActivity(groupId) {
     return prisma.groupActivity.findMany({
         where: {
-            groupId,
+            groupId: groupId,
         },
         orderBy: {
             createdAt: 'desc', // 최신순 정렬

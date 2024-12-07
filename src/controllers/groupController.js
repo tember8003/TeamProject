@@ -242,6 +242,7 @@ groupController.get('/:id/activity', authenticateToken, async (req, res, next) =
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
 
+        console.log("[DEBUG] groupId:", groupId);
         if (isNaN(groupId)) {
             return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
         }
