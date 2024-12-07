@@ -64,73 +64,6 @@ async function deleteGroup(groupId) { //동아리 삭제
     return await groupRepository.deleteGroup(group.id);
 }
 
-async function getSurveyWithQuestions(surveyId, userId) {
-    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
-    if (!check) {
-        const error = new Error('권한이 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-    return await groupRepository.findSurveyWithQuestions(surveyId);
-}
-
-async function addQuestion(groupId, questionText, userId) {
-    // 권한 확인
-    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
-    if (!check) {
-        const error = new Error('권한이 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-
-    return await groupRepository.createQuestion(groupId, questionText);
-}
-
-async function updateQuestion(groupId, questionId, questionText, userId) {
-    // 권한 확인
-    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
-    if (!check) {
-        const error = new Error('권한이 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-
-    return await groupRepository.updateQuestion(groupId, questionId, questionText);
-}
-
-async function deleteQuestion(groupId, questionId, userId) {
-    // 권한 확인
-    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
-    if (!check) {
-        const error = new Error('권한이 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-    return await groupRepository.deleteQuestion(groupId, questionId);
-}
-// 설문지 등록
-async function createSurvey(groupId, title, description, userId) {
-    // 권한 확인
-    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
-    if (!check) {
-        const error = new Error('권한이 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-    return await groupRepository.createSurvey(groupId, title, description);
-}
-
-// 설문지 수정
-async function updateSurvey(groupId, surveyId, title, description, userId) {
-    // 권한 확인
-    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
-    if (!check) {
-        const error = new Error('권한이 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-    return await groupRepository.updateSurvey(surveyId, title, description);
-}
 
 //4개월 이상인지 확인하는 함수 (동아리 후기 작성용)
 function isUserQualifiedForReview(joinDate) {
@@ -231,12 +164,6 @@ async function updateRatingPublic(userId, groupId, isRatingPublic) {
 
 async function getActive(groupId, userId) {
 
-    if (!groupId) {
-        const error = new Error('동아리 ID가 존재하지 않습니다');
-        error.code = 400; // Bad Request
-        throw error;
-    }
-
     const group = await groupRepository.findById(groupId);
 
     if (!group) {
@@ -268,11 +195,11 @@ async function createActivity(activityData, userId) {
         throw error;
     }
 
-    // 사용자가 동아리 회원인지 확인
-    const check = await groupRepository.checkGroupJoin(group.id, userId);
+    // 권한 확인
+    const check = await groupRepository.findByIdWithAdmin(group.id, userId);
     if (!check) {
-        const error = new Error('동아리 회원만 활동내용을 등록할 수 있습니다.');
-        error.code = 403; // Forbidden
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
         throw error;
     }
 
@@ -310,10 +237,7 @@ export default {
     getActive,
     createActivity,
     getClubAdmin,
-    getSurveyWithQuestions,
     addQuestion,
     updateQuestion,
     deleteQuestion,
-    createSurvey,
-    updateSurvey,
 }
