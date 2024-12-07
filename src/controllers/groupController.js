@@ -186,7 +186,13 @@ groupController.post('/:id/review', authenticateToken, async (req, res, next) =>
     try {
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
-        const { ratingScore, review } = req.body;
+        const { ratingScore, review, options, date } = req.body;
+
+        // 날짜 검증 및 변환
+        const reviewDate = new Date(date); // 클라이언트에서 보낸 날짜를 Date 객체로 변환
+        if (isNaN(reviewDate.getTime())) {
+            return res.status(400).json({ error: '유효한 날짜 형식이 아닙니다.' });
+        }
 
         if (!ratingScore || !review) {
             return res.status(400).json({ error: '별점이나 후기를 등록해주세요' });
@@ -199,7 +205,9 @@ groupController.post('/:id/review', authenticateToken, async (req, res, next) =>
         const ratingData = {
             groupId,
             ratingScore,
-            review
+            review,
+            options,
+            createdAt: reviewDate.toISOString()
         };
 
         const rating = await groupService.postRating(ratingData, userId);

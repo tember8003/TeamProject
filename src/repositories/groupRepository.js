@@ -161,6 +161,8 @@ async function createRatingAndUpdateGroup(ratingData, userId, newTotalCount, new
                 userId: userId,
                 ratingScore: ratingData.ratingScore,
                 review: ratingData.review,
+                options: ratingData.options,
+                createdAt: ratingData.createdAt
             },
         });
 

@@ -89,6 +89,7 @@ model UserGroup {
 model Rating {
   ratingId    Int      @id @default(autoincrement())
   ratingScore Int // 1~5점
+  options     String?
   review      String //후기 문구
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
