@@ -238,8 +238,7 @@ async function getActivity(groupId) {
             id: true,
             title: true,
             description: true,
-            images: true,
-            type: true,
+            ActivityImage: true,
             createdAt: true,
         },
     });
@@ -251,8 +250,7 @@ async function createActivity(activityData) {
         data: {
             title: activityData.title,
             description: activityData.description,
-            images: activityData.images,
-            type: activityData.type,
+            ActivityImage: activityData.ActivityImage,
             groupId: activityData.groupId,
         },
     });
@@ -265,6 +263,7 @@ async function getClubAdmin(groupId) {
         },
     })
 }
+
 
 export default {
     findGroupsByCategories,

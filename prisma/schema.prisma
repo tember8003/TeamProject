@@ -100,6 +100,14 @@ model Rating {
   createdAt   DateTime @default(now())
 }
 
+model Survey {
+  id          Int             @id @default(autoincrement())
+  title       String          @db.VarChar(255) // 설문 제목
+  description String          @db.VarChar(500) // 설문 설명
+  createdAt   DateTime        @default(now()) // 생성 시간
+  questions   GroupQuestion[] // 연결된 질문들
+}
+
 model GroupQuestion {
   id           Int           @id @default(autoincrement())
   questionText String        @db.VarChar(255) // 질문 텍스트 길이 제한
@@ -107,6 +115,8 @@ model GroupQuestion {
   group        Group         @relation(fields: [groupId], references: [id])
   groupId      Int
   answers      GroupAnswer[] // 질문에 대한 답변 (1대다 관계)
+  survey       Survey        @relation(fields: [surveyId], references: [id])
+  surveyId     Int
 }
 
 model GroupAnswer {
@@ -122,12 +132,11 @@ model GroupAnswer {
 }
 
 model GroupActivity {
-  id          Int      @id @default(autoincrement())
-  title       String // 활동 제목
-  description String? // 활동 설명
-  createdAt   DateTime @default(now()) // 생성 날짜
-  group       Group    @relation(fields: [groupId], references: [id]) // 소속 동아리
-  groupId     Int // 외래키
-  images      String[] // 활동 이미지
-  type        String // 활동 타입 ("공지사항", "사진" 등)
+  id            Int      @id @default(autoincrement())
+  title         String // 활동 제목
+  description   String // 활동 설명
+  createdAt     DateTime @default(now()) // 생성 날짜
+  group         Group    @relation(fields: [groupId], references: [id]) // 소속 동아리
+  groupId       Int // 외래키
+  ActivityImage String? // 활동 이미지
 }

@@ -64,25 +64,72 @@ async function deleteGroup(groupId) { //동아리 삭제
     return await groupRepository.deleteGroup(group.id);
 }
 
-//질문 등록하기
-async function postQuestion(questionData, userId) {
-    const group = await groupRepository.findById(questionData.groupId);
-
-    if (!group) {
-        const error = new Error('동아리가 존재하지 않습니다.');
-        error.code = 404; // Not Found
+async function getSurveyWithQuestions(surveyId, userId) {
+    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
         throw error;
     }
+    return await groupRepository.findSurveyWithQuestions(surveyId);
+}
 
+async function addQuestion(groupId, questionText, userId) {
     // 권한 확인
-    const check = await groupRepository.findByIdWithAdmin(group.id, userId);
+    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
     if (!check) {
         const error = new Error('권한이 없습니다.');
         error.code = 403;
         throw error;
     }
 
-    return await groupRepository.postQuestion(questionData);
+    return await groupRepository.createQuestion(groupId, questionText);
+}
+
+async function updateQuestion(groupId, questionId, questionText, userId) {
+    // 권한 확인
+    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    return await groupRepository.updateQuestion(groupId, questionId, questionText);
+}
+
+async function deleteQuestion(groupId, questionId, userId) {
+    // 권한 확인
+    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+    return await groupRepository.deleteQuestion(groupId, questionId);
+}
+// 설문지 등록
+async function createSurvey(groupId, title, description, userId) {
+    // 권한 확인
+    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+    return await groupRepository.createSurvey(groupId, title, description);
+}
+
+// 설문지 수정
+async function updateSurvey(groupId, surveyId, title, description, userId) {
+    // 권한 확인
+    const check = await groupRepository.findByIdWithAdmin(groupId, userId);
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+    return await groupRepository.updateSurvey(surveyId, title, description);
 }
 
 //4개월 이상인지 확인하는 함수 (동아리 후기 작성용)
@@ -181,38 +228,6 @@ async function updateRatingPublic(userId, groupId, isRatingPublic) {
     return updatedGroup;
 }
 
-//질문 불러오기
-async function getQuestions(userId, groupId) {
-    if (!groupId) {
-        const error = new Error('동아리 ID가 존재하지 않습니다');
-        error.code = 400; // Bad Request
-        throw error;
-    }
-
-    const group = await groupRepository.findById(groupId);
-
-    if (!group) {
-        const error = new Error('동아리가 존재하지 않습니다.');
-        error.code = 404; // Not Found
-        throw error;
-    }
-
-    // 권한 확인
-    const check = await groupRepository.checkGroupJoin(group.id, userId);
-    if (check) {
-        const error = new Error('이미 동아리 회원입니다. 질문을 볼 수 없습니다.');
-        error.code = 403;
-        throw error;
-    }
-
-    const questions = await groupRepository.getQuestions(group.id);
-
-    if (!questions || questions.length === 0) {
-        return { message: '등록된 질문이 없습니다.' };
-    }
-
-    return questions;
-}
 
 async function getActive(groupId, userId) {
 
@@ -290,11 +305,15 @@ export default {
     getInfo,
     deleteGroup,
     updateGroup,
-    postQuestion,
     postRating,
     updateRatingPublic,
-    getQuestions,
     getActive,
     createActivity,
     getClubAdmin,
+    getSurveyWithQuestions,
+    addQuestion,
+    updateQuestion,
+    deleteQuestion,
+    createSurvey,
+    updateSurvey,
 }

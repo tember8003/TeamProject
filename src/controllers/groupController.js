@@ -259,35 +259,40 @@ groupController.get('/:id/activity', authenticateToken, async (req, res, next) =
 });
 
 // 활동내용 등록
-groupController.post('/:id/activity', authenticateToken, uploadAllFiles.array('images', 5), async (req, res, next) => {
+groupController.post('/:id/activity', authenticateToken, uploadAllFiles.array('ActivityImage', 5), async (req, res, next) => {
     try {
+        console.log("활동내용 등록할래요!!")
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
-        const { title, description, type } = req.body;
+        const { title, description } = req.body;
 
-        if (!title || !type) {
-            return res.status(400).json({ error: '활동 제목과 타입을 입력해주세요.' });
+        console.log('Request body:', req.body);
+        console.log('Files:', req.files);
+
+        if (!title) {
+            return res.status(400).json({ error: '활동 제목을 입력해주세요.' });
         }
 
-        // 업로드된 이미지 경로 배열 생성
-        const imagePaths = req.files.map(file => `${req.protocol}://${req.get('host')}/group/${file.filename}`);
+        const ImagePaths = req.files['ActivityImage']
+            ? `${req.protocol}://${req.get('host')}/uploads/${req.files['ActivityImage'][0].filename}`
+            : null;
 
         // 활동 내용 데이터 생성
         const activityData = {
             groupId,
             title,
             description,
-            images: imagePaths,
-            type
+            ActivityImage: ImagePaths,
         };
 
         // 서비스 호출
         const activity = await groupService.createActivity(activityData, userId);
-
         return res.status(201).json({ message: '활동내용 등록 성공', data: activity });
     } catch (error) {
+        console.log("활동내용 등록 실패했어요..")
         next(error);
     }
 });
+
 
 export default groupController;
