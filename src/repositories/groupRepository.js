@@ -212,37 +212,15 @@ async function checkGroupJoin(groupId, userId) {
     return !!member;
 }
 
-//동아리 신청용 질문 리스트
-async function getQuestions(groupId) {
-    const questions = await prisma.groupQuestion.findMany({
-        where: {
-            groupId: groupId,
-        },
-        select: {
-            questionText: true,
-        },
-    });
-
-    return questions;
-}
-
 // 활동내용 조회
 async function getActivity(groupId) {
-    return prisma.groupActivity.findMany({
-        where: {
-            groupId: groupId,
-        },
-        orderBy: {
-            createdAt: 'desc', // 최신순 정렬
-        },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            ActivityImage: true,
-            createdAt: true,
-        },
+    console.log("[DEBUG] getActivity called with groupId:", groupId);
+    const activities = await prisma.groupActivity.findMany({
+        where: { groupId },
+        orderBy: { createdAt: 'desc' },
     });
+    console.log("[DEBUG] activities:", activities);
+    return activities;
 }
 
 // 활동내용 등록
@@ -279,7 +257,6 @@ export default {
     createRatingAndUpdateGroup,
     updateRatingPublic,
     checkGroupJoin,
-    getQuestions,
     getActivity,
     createActivity,
     getClubAdmin,
