@@ -77,7 +77,7 @@ groupController.delete('/:id', authenticateToken, async (req, res, next) => {
 
 //유저 개인 페이지에 프로필 사진 등록하기 위해 설정
 const uploadgroupImage = multer({
-    storage: createMulterStorage('group'),
+    storage: storage,
     fileFilter: fileFilter
 });
 
