@@ -75,24 +75,10 @@ groupController.delete('/:id', authenticateToken, async (req, res, next) => {
     }
 });
 
-//유저 개인 페이지에 프로필 사진 등록하기 위해 설정
-const uploadgroupImage = multer({
-    storage: storage,
-    fileFilter: fileFilter
-});
 
 const uploadAllFiles = multer({
     storage: storage,
-    fileFilter: (req, file, callback) => {
-        const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        const allowedTypes = [...allowedImageTypes];
-
-        if (allowedTypes.includes(file.mimetype)) {
-            callback(null, true); // 허용된 파일 형식
-        } else {
-            callback(new Error('지원하지 않는 파일 형식입니다.'), false); // 허용되지 않은 파일 형식
-        }
-    }
+    fileFilter: fileFilter
 });
 
 //동아리 내용 수정 (기본적인 이름,설명,이미지,태그,카테고리만 등록됨) - 후기 내용 추가해야 함. (테스트 아직 X)
