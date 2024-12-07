@@ -7,8 +7,6 @@ import authenticateToken from '../middlewares/authenticateToken.js';
 
 const groupController = express.Router();
 
-import { fileURLToPath } from 'url';
-
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
         const uploadPath = '/uploads'; // Persistent Disk 경로
@@ -23,8 +21,6 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, callback) => {
-    console.log('[DEBUG] 파일 이름:', file.originalname);
-    console.log('[DEBUG] MIME 타입:', file.mimetype);
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     //console.log("파일 MIME 타입:", file.mimetype);
 
@@ -259,22 +255,23 @@ groupController.get('/:id/activity', authenticateToken, async (req, res, next) =
 });
 
 // 활동내용 등록
-groupController.post('/:id/activity', authenticateToken, uploadAllFiles.array('ActivityImage', 5), async (req, res, next) => {
+groupController.post('/:id/activity', authenticateToken, uploadAllFiles.single('ActivityImage'), async (req, res, next) => {
     try {
-        console.log("활동내용 등록할래요!!")
+        console.log("활동내용 등록할래요!!");
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
         const { title, description } = req.body;
 
         console.log('Request body:', req.body);
-        console.log('Files:', req.files);
+        console.log('File:', req.file); // 단일 파일 확인
 
         if (!title) {
             return res.status(400).json({ error: '활동 제목을 입력해주세요.' });
         }
 
-        const ImagePaths = req.files['ActivityImage']
-            ? `${req.protocol}://${req.get('host')}/uploads/${req.files['ActivityImage'][0].filename}`
+        // 단일 파일의 경로 구성
+        const ImagePaths = req.file
+            ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
             : null;
 
         // 활동 내용 데이터 생성
@@ -285,11 +282,13 @@ groupController.post('/:id/activity', authenticateToken, uploadAllFiles.array('A
             ActivityImage: ImagePaths,
         };
 
+        console.log('Activity Data:', activityData); // 디버깅용 출력
+
         // 서비스 호출
         const activity = await groupService.createActivity(activityData, userId);
         return res.status(201).json({ message: '활동내용 등록 성공', data: activity });
     } catch (error) {
-        console.log("활동내용 등록 실패했어요..")
+        console.error("활동내용 등록 실패했어요..", error);
         next(error);
     }
 });
