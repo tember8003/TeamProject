@@ -240,19 +240,14 @@ groupController.get('/:id/questions', authenticateToken, async (req, res, next) 
 groupController.get('/:id/activity', authenticateToken, async (req, res, next) => {
     try {
         const groupId = parseInt(req.params.id, 10);
-        console.log("[DEBUG] req.params.id:", req.params.id);
-        console.log("[DEBUG] Parsed groupId:", groupId);
         const userId = req.user.id;
 
-        console.log("[DEBUG] groupId:", groupId);
         if (isNaN(groupId)) {
             return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
         }
 
-        const group = await groupService.getActive(userId, groupId);
-        console.log("[DEBUG] groupService.getActive returned:", group);
+        const group = await groupService.getActive(groupId, userId);
 
-        console.log(group);
         return res.status(200).json(group);
     } catch (error) {
         next(error);

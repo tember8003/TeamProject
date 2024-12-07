@@ -214,13 +214,21 @@ async function checkGroupJoin(groupId, userId) {
 
 // 활동내용 조회
 async function getActivity(groupId) {
-    console.log("[DEBUG] getActivity called with groupId:", groupId);
-    const activities = await prisma.groupActivity.findMany({
-        where: { groupId },
-        orderBy: { createdAt: 'desc' },
+    return prisma.groupActivity.findMany({
+        where: {
+            groupId: groupId,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            ActivityImage: true,
+            createdAt: true,
+        },
     });
-    console.log("[DEBUG] activities:", activities);
-    return activities;
 }
 
 // 활동내용 등록

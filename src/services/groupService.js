@@ -163,7 +163,6 @@ async function updateRatingPublic(userId, groupId, isRatingPublic) {
 
 
 async function getActive(groupId, userId) {
-    console.log("[DEBUG] getActive called with groupId:", groupId, "userId:", userId);
     const group = await groupRepository.findById(groupId);
 
     if (!group) {
