@@ -85,9 +85,10 @@ const uploadAllFiles = multer({
 
 //동아리 내용 수정 (기본적인 이름,설명,이미지,태그,카테고리만 등록됨) - 후기 내용 추가해야 함. (테스트 아직 X)
 groupController.put('/:id', uploadAllFiles.fields([
-    { name: 'GroupImage', maxCount: 1 },
-    { name: 'IntroduceImage', maxCount: 1 }]), authenticateToken, async (req, res, next) => {
+    { name: 'GroupImage' },
+    { name: 'IntroduceImage' }]), authenticateToken, async (req, res, next) => {
         try {
+            console.log('[DEBUG] Request Headers:', req.headers);
             const groupId = parseInt(req.params.id, 10);
             const userId = req.user.id;
             console.log('[DEBUG] req.files:', req.files);
