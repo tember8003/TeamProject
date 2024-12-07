@@ -121,6 +121,8 @@ async function postRating(ratingData, userId) {
     const joinDate = groupUser.joinDate;
     const isQualified = isUserQualifiedForReview(joinDate);
 
+    console.log("가입 날짜:", joinDate);
+
     //만약 4개월 이상 안됐으면 에러
     if (!isQualified) {
         console.log("4개월 안됐습니다!");

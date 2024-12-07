@@ -84,6 +84,8 @@ model UserGroup {
   status   String   @default("pending") // 최종 가입 상태 (pending(보류), approved(수락), rejected(거절)
 
   //answers   GroupAnswer[]  // 해당 신청에 대한 모든 질문의 답변들 (고민중)
+
+  @@unique([userId, groupId])
 }
 
 model Rating {
