@@ -9,43 +9,28 @@ const groupController = express.Router();
 
 import { fileURLToPath } from 'url';
 
-// __dirname을 ESM 방식으로 정의
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const userController = express.Router();
-
-function createMulterStorage(folderName) {
-    // 프로젝트 루트 경로에서 src/group 경로로 설정
-    const uploadPath = path.join(__dirname, '..', folderName); // '..'을 추가해 상위 폴더로 이동
-
-    // 폴더가 존재하지 않으면 생성
-    if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true });
+const storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        const uploadPath = '/uploads'; // Persistent Disk 경로
+        console.log("파일 저장 경로:", uploadPath); // 경로 확인 로그
+        callback(null, uploadPath); // 저장 경로 지정
+    },
+    filename: function (req, file, callback) {
+        const sanitizedFilename = Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '-');
+        console.log("파일 이름:", sanitizedFilename); // 파일 이름 확인 로그
+        callback(null, sanitizedFilename);
     }
-
-    return multer.diskStorage({
-        destination: function (req, file, callback) {
-            console.log("파일 저장 경로:", uploadPath); // 경로 확인
-            callback(null, uploadPath);
-        },
-        filename(req, file, callback) {
-            const fileName = Date.now() + path.extname(file.originalname);
-            console.log("파일 이름:", fileName); // 파일 이름 확인
-            callback(null, fileName);
-        }
-    });
-}
+});
 
 const fileFilter = (req, file, callback) => {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-    console.log("파일 MIME 타입:", file.mimetype);
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    //console.log("파일 MIME 타입:", file.mimetype);
 
     if (allowedTypes.includes(file.mimetype)) {
-        console.log("허용된 파일 형식입니다.");
+        //console.log("허용된 파일 형식입니다.");
         callback(null, true);
     } else {
-        console.error("지원하지 않는 파일 형식입니다.");
+        //console.error("지원하지 않는 파일 형식입니다.");
         callback(new Error('지원하지 않는 파일 형식입니다.'), false);
     }
 };
@@ -96,49 +81,65 @@ const uploadgroupImage = multer({
     fileFilter: fileFilter
 });
 
+const uploadAllFiles = multer({
+    storage: storage,
+    fileFilter: (req, file, callback) => {
+        const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        const allowedTypes = [...allowedImageTypes];
 
-//동아리 내용 수정 (기본적인 이름,설명,이미지,태그,카테고리만 등록됨) - 후기 내용 추가해야 함. (테스트 아직 X)
-groupController.put('/:id', uploadgroupImage.single('GroupImage'), authenticateToken, async (req, res, next) => {
-    try {
-        const groupId = parseInt(req.params.id, 10);
-        const userId = req.user.id;
-
-        let { name, category, description, tags, GroupTime, GroupRoom, period, Contact } = req.body;
-
-        if (isNaN(groupId)) {
-            return res.status(400).json({ error: 'Invalid group ID.' });
+        if (allowedTypes.includes(file.mimetype)) {
+            callback(null, true); // 허용된 파일 형식
+        } else {
+            callback(new Error('지원하지 않는 파일 형식입니다.'), false); // 허용되지 않은 파일 형식
         }
-        // `tags`가 문자열이면 배열로 변환
-        const tagsArray = Array.isArray(tags) ? tags : [tags];
-
-        //console.log("req.file:", req.file);
-
-        // 업로드된 그룹 이미지 URL 생성
-        let groupImageUrl;
-        if (req.file) {
-            groupImageUrl = `${req.protocol}://${req.get('host')}/group/${req.file.filename}`;
-        }
-
-        const groupData = {
-            id: groupId,
-            name,
-            category,
-            description,
-            tags: tagsArray,
-            GroupTime,
-            GroupRoom,
-            period,
-            Contact,
-            GroupImage: groupImageUrl || null // 동아리 프로필 이미지 URL 저장
-        };
-
-        const group = await groupService.updateGroup(groupData, userId);
-
-        return res.status(200).json({ message: '동아리 수정 성공' });
-    } catch (error) {
-        next(error);
     }
 });
+
+//동아리 내용 수정 (기본적인 이름,설명,이미지,태그,카테고리만 등록됨) - 후기 내용 추가해야 함. (테스트 아직 X)
+groupController.put('/:id', uploadAllFiles.fields([
+    { name: 'GroupImage', maxCount: 1 },
+    { name: 'IntroduceImage', maxCount: 1 }]), authenticateToken, async (req, res, next) => {
+        try {
+            const groupId = parseInt(req.params.id, 10);
+            const userId = req.user.id;
+
+            let { name, GroupLeader, category, description, GroupTime, GroupRoom, Contact } = req.body;
+
+            if (isNaN(groupId)) {
+                return res.status(400).json({ error: 'Invalid group ID.' });
+            }
+
+            //console.log("req.file:", req.file);
+
+            // 업로드된 그룹 이미지 URL 생성
+            const groupImageUrl = req.files['GroupImage']
+                ? `${req.protocol}://${req.get('host')}/uploads/${req.files['GroupImage'][0].filename}`
+                : null;
+            const introduceImageUrl = req.files['IntroduceImage']
+                ? `${req.protocol}://${req.get('host')}/uploads/${req.files['IntroduceImage'][0].filename}`
+                : null;
+
+            const groupData = {
+                id: groupId,
+                name,
+                GroupLeader,
+                category,
+                description,
+                GroupTime,
+                GroupRoom,
+                Contact,
+                GroupImage: groupImageUrl || null, // 동아리 프로필 이미지 URL 저장
+                IntroduceImage: introduceImageUrl || null,
+
+            };
+
+            const group = await groupService.updateGroup(groupData, userId);
+
+            return res.status(200).json({ message: '동아리 수정 성공' });
+        } catch (error) {
+            next(error);
+        }
+    });
 
 //질문 등록 (테스트 아직 X)
 groupController.post(':/id/questions', authenticateToken, async (req, res, next) => {

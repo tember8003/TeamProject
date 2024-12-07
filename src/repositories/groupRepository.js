@@ -128,12 +128,13 @@ async function updateGroup(groupData) {
         },
         data: {
             name: groupData.name || existedGroup.name,
+            GroupLeader: groupData.GroupLeader || existedGroup.GroupLeader,
             description: groupData.description || existedGroup.description,
             tags: groupData.tags || existedGroup.tags,
             GroupImage: groupData.GroupImage || existedGroup.GroupImage,
             GroupTime: groupData.GroupTime || existedGroup.GroupTime,
             GroupRoom: groupData.GroupRoom || existedGroup.GroupRoom,
-            //period: groupData.period || existedGroup.period,
+            IntroduceImage: groupData.IntroduceImage || existedGroup.IntroduceImage,
             Contact: groupData.Contact || existedGroup.Contact,
         },
     });
