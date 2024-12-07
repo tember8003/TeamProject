@@ -256,6 +256,14 @@ async function createActivity(activityData) {
     });
 }
 
+async function getClubAdmin(groupId) {
+    return prisma.group.findUnique({
+        where: {
+            groupId
+        },
+    })
+}
+
 export default {
     findGroupsByCategories,
     findByName,
@@ -272,4 +280,5 @@ export default {
     getQuestions,
     getActivity,
     createActivity,
+    getClubAdmin,
 }

@@ -266,7 +266,7 @@ async function createActivity(activityData, userId) {
 }
 
 async function getClubAdmin(groupId, userId) {
-    const group = await groupRepository.findById(activityData.groupId);
+    const group = await groupRepository.findById(groupId);
 
     if (!group) {
         const error = new Error('동아리가 존재하지 않습니다.');
@@ -282,7 +282,7 @@ async function getClubAdmin(groupId, userId) {
         throw error;
     }
 
-    return check;
+    return await groupRepository.getClubAdmin(group.id);
 }
 
 
@@ -296,4 +296,5 @@ export default {
     getQuestions,
     getActive,
     createActivity,
+    getClubAdmin,
 }

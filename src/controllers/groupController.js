@@ -227,27 +227,6 @@ groupController.post('/:id/review', authenticateToken, async (req, res, next) =>
     }
 });
 
-/*
-//후기 비공개/공개 전환
-groupController.patch('/:id/rating-visibility', authenticateToken, async (req, res, next) => {
-    try {
-        const groupId = parseInt(req.params.id, 10);
-        const { isRatingPublic } = req.body;
-        const userId = req.user.id;
-
-        if (typeof isRatingPublic !== 'boolean') {
-            return res.status(400).json({ error: 'Invalid value for isRatingPublic.' });
-        }
-
-        const updatedGroup = await groupService.updateRatingPublic(userId, groupId, isRatingPublic);
-
-        return res.status(200).json({ message: '공개/비공개 전환 성공', data: updatedGroup });
-    } catch (error) {
-        next(error);
-    }
-});
-*/
-
 //질문 불러오기
 groupController.get('/:id/questions', authenticateToken, async (req, res, next) => {
     try {
