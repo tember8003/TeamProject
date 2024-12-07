@@ -163,7 +163,7 @@ async function updateRatingPublic(userId, groupId, isRatingPublic) {
 
 
 async function getActive(groupId, userId) {
-
+    console.log("[DEBUG] getActive called with groupId:", groupId, "userId:", userId);
     const group = await groupRepository.findById(groupId);
 
     if (!group) {
@@ -173,17 +173,17 @@ async function getActive(groupId, userId) {
     }
 
     // 권한 확인
-    const AdminCheck = await groupRepository.findByIdWithAdmin(group.id, userId);
+    const AdminCheck = await groupRepository.findByIdWithAdmin(groupId, userId);
 
     // 권한 확인
-    const check = await groupRepository.checkGroupJoin(group.id, userId);
+    const check = await groupRepository.checkGroupJoin(groupId, userId);
     if (!check && !AdminCheck) {
         const error = new Error('동아리 회원이 아닙니다.');
         error.code = 403;
         throw error;
     }
 
-    const active = await groupRepository.getActivity(group.id);
+    const active = await groupRepository.getActivity(groupId);
 
     return active;
 }
