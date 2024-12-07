@@ -259,7 +259,7 @@ async function createActivity(activityData) {
 async function getClubAdmin(groupId) {
     return prisma.group.findUnique({
         where: {
-            groupId
+            id: groupId
         },
     })
 }
