@@ -36,6 +36,7 @@ async function getInfo(groupId) {
             tags: true,
             isOfficial: true,
             createdById: true,
+            IntroduceImage: true,
             GroupLeader: true,
             GroupRoom: true,
             Contact: true,
