@@ -109,8 +109,7 @@ async function updateUser(userId, userData) {
 async function findGroupByUser(userId, groupId) {
     return await prisma.userGroup.findUnique({
         where: {
-            userId: userId,
-            groupId: groupId,
+            userId_groupId: { userId, groupId }, // 복합 고유 키 사용
         },
     });
 }
