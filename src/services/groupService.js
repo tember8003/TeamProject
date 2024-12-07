@@ -261,6 +261,26 @@ async function createActivity(activityData, userId) {
     return await groupRepository.createActivity(activityData);
 }
 
+async function getClubAdmin(groupId, userId) {
+    const group = await groupRepository.findById(activityData.groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    const check = await groupRepository.findByIdWithAdmin(group.id, userId);
+
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    return check;
+}
+
 
 export default {
     getInfo,

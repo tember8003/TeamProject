@@ -162,10 +162,27 @@ groupController.post(':/id/questions', authenticateToken, async (req, res, next)
     } catch (error) {
         next(error);
     }
-})
+});
+
+//어드민 페이지 불러오기
+groupController.get('/:id/clubAdmin', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+
+        const club = await groupService.getClubAdmin(groupId, userId);
+
+        return res.status(201).json(club);
+    } catch (error) {
+        if (error.code === 403) {
+            console.log("권한이 없습니다!");
+        }
+        next(error);
+    }
+});
 
 //동아리내 후기 작성 (테스트 아직 X)
-groupController.post('/:id', authenticateToken, async (req, res, next) => {
+groupController.post('/:id/review', authenticateToken, async (req, res, next) => {
     try {
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
@@ -193,6 +210,7 @@ groupController.post('/:id', authenticateToken, async (req, res, next) => {
     }
 });
 
+/*
 //후기 비공개/공개 전환
 groupController.patch('/:id/rating-visibility', authenticateToken, async (req, res, next) => {
     try {
@@ -211,6 +229,7 @@ groupController.patch('/:id/rating-visibility', authenticateToken, async (req, r
         next(error);
     }
 });
+*/
 
 //질문 불러오기
 groupController.get('/:id/questions', authenticateToken, async (req, res, next) => {
