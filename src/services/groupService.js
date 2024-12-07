@@ -173,8 +173,11 @@ async function getActive(groupId, userId) {
     }
 
     // 권한 확인
+    const AdminCheck = await groupRepository.findByIdWithAdmin(group.id, userId);
+
+    // 권한 확인
     const check = await groupRepository.checkGroupJoin(group.id, userId);
-    if (!check) {
+    if (!check && !AdminCheck) {
         const error = new Error('동아리 회원이 아닙니다.');
         error.code = 403;
         throw error;
@@ -237,7 +240,4 @@ export default {
     getActive,
     createActivity,
     getClubAdmin,
-    addQuestion,
-    updateQuestion,
-    deleteQuestion,
 }
