@@ -23,6 +23,8 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, callback) => {
+    console.log('[DEBUG] 파일 이름:', file.originalname);
+    console.log('[DEBUG] MIME 타입:', file.mimetype);
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     //console.log("파일 MIME 타입:", file.mimetype);
 
@@ -88,6 +90,11 @@ groupController.put('/:id', uploadAllFiles.fields([
         try {
             const groupId = parseInt(req.params.id, 10);
             const userId = req.user.id;
+            console.log('[DEBUG] req.files:', req.files);
+
+            if (!req.files) {
+                return res.status(400).json({ error: '파일이 업로드되지 않았습니다.' });
+            }
 
             let { name, GroupLeader, category, description, GroupTime, GroupRoom, Contact } = req.body;
 
