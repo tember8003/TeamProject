@@ -248,6 +248,7 @@ groupController.get('/:id/activity', authenticateToken, async (req, res, next) =
 
         const group = await groupService.getActive(userId, groupId);
 
+        console.log(group);
         return res.status(200).json(group);
     } catch (error) {
         next(error);
