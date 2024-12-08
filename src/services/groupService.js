@@ -17,6 +17,8 @@ async function getInfo(groupId) { //동아리 정보 가져오기
         throw error;
     }
 
+
+
     return await groupRepository.getInfo(group.id);
 }
 
