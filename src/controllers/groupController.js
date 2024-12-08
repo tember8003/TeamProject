@@ -343,7 +343,7 @@ groupController.get('/:id/form', authenticateToken, async (req, res, next) => {
             return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
         }
 
-        const getform = groupService.getForm(groupId);
+        const getform = await groupService.getForm(groupId);
 
         return res.status(200).json(getform);
     } catch (error) {

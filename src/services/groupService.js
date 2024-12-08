@@ -258,7 +258,11 @@ async function getForm(groupId) {
         throw error;
     }
 
-    return await groupRepository.getForm(groupId);
+    if (!group.Form) {
+        throw new Error('폼 링크가 설정되지 않았습니다.');
+    }
+
+    return { Form: group.Form };
 }
 
 async function addMember(groupId, userId, groupData) {

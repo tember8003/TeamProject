@@ -252,14 +252,20 @@ async function getClubAdmin(groupId) {
 }
 
 async function getForm(groupId) {
-    return prisma.group.findUnique({
+    const group = await prisma.group.findUnique({
         where: {
-            id: groupId, // 고유한 그룹 ID로 조회
+            id: groupId,
         },
         select: {
-            Form: true, // form 필드만 조회
+            Form: true,
         },
     });
+
+    if (!group || !group.Form) {
+        throw new Error('폼 링크가 존재하지 않습니다.');
+    }
+
+    return group; // Form 데이터 반환
 }
 
 async function addForm(groupId, form) {
