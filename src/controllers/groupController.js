@@ -293,5 +293,39 @@ groupController.post('/:id/activity', authenticateToken, uploadAllFiles.single('
     }
 });
 
+groupController.put('/:id/formAdd', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+        const { form } = req.body;
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
+        }
+
+        const addform = groupService.addForm(groupId, userId, form);
+
+        return res.status(200).json(addform);
+    } catch (error) {
+        next(error);
+    }
+});
+
+groupController.get('/:id/form', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
+        }
+
+        const getform = groupService.getForm(groupId);
+
+        return res.status(200).json(getform);
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 export default groupController;

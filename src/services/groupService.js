@@ -229,6 +229,37 @@ async function getClubAdmin(groupId, userId) {
     return await groupRepository.getClubAdmin(group.id);
 }
 
+async function addForm(groupId, userId, form) {
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    const check = await groupRepository.findByIdWithAdmin(group.id, userId);
+
+    if (!check) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    return await groupRepository.addForm(groupId, form);
+}
+
+async function getForm(groupId) {
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    return await groupRepository.getForm(groupId);
+}
 
 export default {
     getInfo,
@@ -239,4 +270,6 @@ export default {
     getActive,
     createActivity,
     getClubAdmin,
+    addForm,
+    getForm,
 }
