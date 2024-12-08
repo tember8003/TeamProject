@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
 function generateToken(user) {
-    return jwt.sign({ id: user.id, userNum: user.userNum, name: user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ id: user.id, userNum: user.userNum, name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
 }
 

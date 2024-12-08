@@ -160,13 +160,14 @@ userController.post('/login', async (req, res, next) => {
 
         if (result.status === 200) {
             // 로그인 성공 시 토큰 발행
-            const token = authService.generateToken({ id: result.user.id, userNum: result.user.userNum, name: result.user.name });
+            const token = authService.generateToken({ id: result.user.id, userNum: result.user.userNum, name: result.user.name, email: result.user.email });
             console.log("로그인 했어요!!");
             res.status(200).json({
                 message: '로그인 성공', token, user: {
                     id: result.user.id,
                     userNum: result.user.userNum,
-                    name: result.user.name
+                    name: result.user.name,
+                    email: result.user.email
                 }
             });
         } else {

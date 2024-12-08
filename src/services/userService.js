@@ -133,6 +133,7 @@ async function login(userData) {
     }
 
     if (existedUser.status === "approved") { //로그인 성공
+        existedUser.email = decrypt(existedUser.email);
         return { status: 200, user: existedUser };
     } else if (existedUser.status === "pending") {
         return { status: 403, message: '관리자 승인 대기 중입니다.' };
