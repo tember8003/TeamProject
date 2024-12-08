@@ -225,7 +225,7 @@ async function createGroup(userId, groupData) {
 function getOrderBy(sortBy) {
     if (sortBy === 'latest') {
         return { createdAt: 'desc' };
-    } else if (sortBy === 'name') { //평균 별점 순서
+    } else if (sortBy === 'name') {
         return { name: 'asc' };
     } else {
         return { createdAt: 'desc' }; // 기본 정렬: 최신순
