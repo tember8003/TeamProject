@@ -17,10 +17,11 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//백엔드 코드 배포용 설정
+// 백엔드 코드 배포용 설정
 app.use(cors({
-    origin: '*',
+    origin: ['https://4601-1-238-203-158.ngrok-free.app', 'http://127.0.0.1:5000'], // 허용할 도메인들
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true // 쿠키 및 인증 정보를 포함한 요청 허용
 }));
 
 app.options('*', cors());
