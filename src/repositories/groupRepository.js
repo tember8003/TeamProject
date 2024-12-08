@@ -278,15 +278,17 @@ async function addMember(groupId, userId) {
         // 기존 관계가 이미 있는지 확인
         const existingMember = await prisma.userGroup.findUnique({
             where: {
-                groupId_userId: {
+                userId_groupId: { // 복합 고유 키의 이름
+                    userId: userId,
                     groupId: groupId,
-                    userId: userId, // `userNum` 필드가 `userId` 역할
                 },
             },
         });
 
         if (existingMember) {
-            throw new Error('유저가 이미 이 동아리에 가입되어 있습니다.');
+            const error = new Error('유저가 이미 이 동아리에 가입되어 있습니다.');
+            error.statusCode = 409; // Conflict
+            throw error;
         }
 
         // 새로운 멤버 추가
@@ -297,6 +299,7 @@ async function addMember(groupId, userId) {
             },
         });
     } catch (error) {
+        console.error('멤버 추가 중 오류 발생:', error.message);
         throw new Error('멤버 추가 중 오류가 발생했습니다: ' + error.message);
     }
 }
