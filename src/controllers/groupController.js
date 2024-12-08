@@ -311,7 +311,29 @@ groupController.put('/:id/form', authenticateToken, async (req, res, next) => {
     }
 });
 
+groupController.post('/:id/member', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+        const { userNum, name } = req.body;
 
+        if (isNaN(groupId)) {
+            return res.status(400).json({ error: '유효하지 않은 동아리 ID입니다.' });
+        }
+        const groupData = {
+            userNum,
+            name,
+        }
+
+        const addMember = await groupService.addMember(groupId, userId, groupData);
+
+
+        return res.status(200).json(addMember);
+    } catch (error) {
+        console.error("멤버 추가 중 에러:", error);
+        return res.status(500).json({ error: '멤버 추가 중 오류가 발생했습니다.', details: error.message });
+    }
+})
 
 groupController.get('/:id/form', authenticateToken, async (req, res, next) => {
     try {

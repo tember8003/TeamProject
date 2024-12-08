@@ -129,6 +129,15 @@ async function getGroup(orderBy) {
     return group;
 }
 
+async function findUser(userNum, name) {
+    return await prisma.user.findFirst({
+        where: {
+            userNum: userNum,
+            name: name,
+        }
+    });
+}
+
 async function getGroupByCategory(category, orderBy) {
     const group = await prisma.group.findMany({
         where: {
@@ -160,4 +169,5 @@ export default {
     getGroup,
     getReviewById,
     getGroupByCategory,
+    findUser,
 }

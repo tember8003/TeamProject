@@ -273,6 +273,33 @@ async function addForm(groupId, form) {
     });
 }
 
+async function addMember(groupId, userId) {
+    try {
+        // 기존 관계가 이미 있는지 확인
+        const existingMember = await prisma.userGroup.findUnique({
+            where: {
+                groupId_userId: {
+                    groupId: groupId,
+                    userId: userId, // `userNum` 필드가 `userId` 역할
+                },
+            },
+        });
+
+        if (existingMember) {
+            throw new Error('유저가 이미 이 동아리에 가입되어 있습니다.');
+        }
+
+        // 새로운 멤버 추가
+        return await prisma.userGroup.create({
+            data: {
+                groupId: groupId,
+                userId: userId,
+            },
+        });
+    } catch (error) {
+        throw new Error('멤버 추가 중 오류가 발생했습니다: ' + error.message);
+    }
+}
 export default {
     findGroupsByCategories,
     findByName,
@@ -291,4 +318,5 @@ export default {
     getClubAdmin,
     addForm,
     getForm,
+    addMember,
 }

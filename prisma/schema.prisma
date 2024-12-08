@@ -81,8 +81,7 @@ model UserGroup {
   group    Group    @relation(fields: [groupId], references: [id])
   groupId  Int
   joinDate DateTime @default(now())
-  role     String // 동아리 내 역할 (회원, 개설자)
-  status   String   @default("pending") // 최종 가입 상태 (pending(보류), approved(수락), rejected(거절)
+  status   String   @default("approved") // 최종 가입 상태 (pending(보류), approved(수락), rejected(거절)
 
   //answers   GroupAnswer[]  // 해당 신청에 대한 모든 질문의 답변들 (고민중)
 
