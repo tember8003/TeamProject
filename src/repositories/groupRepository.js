@@ -257,7 +257,7 @@ async function getForm(groupId) {
             id: groupId, // 고유한 그룹 ID로 조회
         },
         select: {
-            form: true, // form 필드만 조회
+            Form: true, // form 필드만 조회
         },
     });
 }
@@ -268,7 +268,7 @@ async function addForm(groupId, form) {
             id: groupId, // 수정하려는 그룹 ID
         },
         data: {
-            form: form, // 업데이트할 form 데이터
+            Form: form, // 업데이트할 form 데이터
         },
     });
 }
