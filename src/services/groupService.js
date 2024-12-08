@@ -90,7 +90,7 @@ async function postRating(ratingData, userId) {
         throw error;
     }
 
-    const groupUser = await userRepository.findGroupByUser(group.id, userId);
+    const groupUser = await userRepository.findGroupByUser(userId, group.id);
 
     if (!groupUser) {
         console.log("동아리 등록 에러!");
