@@ -280,7 +280,7 @@ async function addForm(groupId, form) {
 }
 
 async function addMember(groupId, userId) {
-    const prisma = require('@prisma/client').PrismaClient(); // Prisma Client 초기화
+    const prisma = require('../prismaClient'); // Prisma 클라이언트
 
     try {
         return await prisma.$transaction(async (prisma) => {
