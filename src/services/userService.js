@@ -248,17 +248,10 @@ async function getGroup(category, sortBy) {
     return group;
 }
 
-/*
-//동아리 목록 가져오기
-async function getGroup(category, sortBy) {
-    const orderBy = getOrderBy(sortBy);
-
-    const group = userRepository.getGroup(category, orderBy)
-
-    return group;
+async function getMyGroup(userId) {
+    // 유저가 가입한 모든 그룹 조회
+    return await userRepository.getUserGroups(userId);
 }
-    */
-
 
 
 
@@ -274,4 +267,5 @@ export default {
     createGroup,
     getGroup,
     getReviewById,
+    getMyGroup,
 }

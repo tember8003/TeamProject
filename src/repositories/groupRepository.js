@@ -109,9 +109,8 @@ async function deleteGroup(groupId) {
     });
 }
 
-//동아리 개설자인지 확인
 async function findByIdWithAdmin(groupId, userId) {
-    const group = prisma.group.findFirst({
+    const group = await prisma.group.findFirst({ // await 추가
         where: {
             id: groupId,
             createdById: userId, // 동아리 생성자 확인
@@ -327,6 +326,52 @@ async function findReviewById(ratingId) {
         },
     });
 }
+
+async function deleteMember(groupId, memberId) {
+    const deleteResult = await prisma.userGroup.deleteMany({
+        where: {
+            groupId: groupId,
+            userId: memberId,
+        },
+    });
+
+    if (deleteResult.count > 0) {
+        // 멤버 수 감소
+        await prisma.group.update({
+            where: {
+                id: groupId,
+            },
+            data: {
+                memberNum: {
+                    decrement: 1,
+                },
+            },
+        });
+    }
+
+    return deleteResult;
+}
+
+async function getMembers(groupId) {
+    // 해당 그룹의 모든 멤버 조회
+    return await prisma.userGroup.findMany({
+        where: {
+            groupId: groupId,
+        },
+        select: {
+            user: {
+                select: {
+                    id: true,
+                    userNum: true,
+                    name: true,
+                    email: true,
+                },
+            },
+            joinDate: true,
+        },
+    });
+}
+
 export default {
     findGroupsByCategories,
     findByName,
@@ -349,4 +394,5 @@ export default {
     updateReview,
     deleteReview,
     findReviewById,
+    deleteMember,
 }

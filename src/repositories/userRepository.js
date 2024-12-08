@@ -155,6 +155,25 @@ async function getGroupByCategory(category, orderBy) {
     return group;
 }
 
+async function getUserGroups(userId) {
+    // 사용자가 가입한 그룹들 조회
+    return await prisma.userGroup.findMany({
+        where: {
+            userId: userId,
+        },
+        select: {
+            group: {
+                select: {
+                    id: true,
+                    name: true,
+                    category: true,
+                    GroupRoom: true,
+                    Contact: true,
+                },
+            },
+        },
+    });
+}
 
 export default {
     findByNum,
@@ -170,4 +189,5 @@ export default {
     getReviewById,
     getGroupByCategory,
     findUser,
+    getUserGroups,
 }

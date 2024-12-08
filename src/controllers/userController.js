@@ -9,6 +9,7 @@ import authService from '../services/authService.js';
 //-------회원가입 로직용 시작----------
 
 import { fileURLToPath } from 'url';
+import { group } from 'console';
 
 // __dirname을 ESM 방식으로 정의
 const __filename = fileURLToPath(import.meta.url);
@@ -200,6 +201,19 @@ userController.delete('/user_page', authenticateToken, async (req, res, next) =>
         } else {
             return next(error);
         }
+    }
+});
+
+userController.get('/myGroup', authenticateToken, async (req, res, next) => {
+    try {
+        const userId = req.user.id; // 인증된 사용자 ID
+
+        // Service 호출
+        const groups = await userService.getMyGroup(userId);
+
+        return res.status(200).json({ success: true, groups });
+    } catch (error) {
+        next(error);
     }
 });
 

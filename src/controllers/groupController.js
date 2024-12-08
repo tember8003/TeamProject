@@ -53,6 +53,45 @@ groupController.get('/:id', async (req, res, next) => {
     }
 });
 
+groupController.delete('/:id/member/:userId', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+        const memberId = parseInt(req.params.userId, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ error: 'Invalid group ID.' });
+        }
+
+        // Service 호출
+        await groupService.deleteMember(groupId, userId, memberId);
+
+        return res.status(200).json({ message: 'Member successfully removed from the group.' });
+    } catch (error) {
+        next(error);
+    }
+});
+
+//멤버 조회
+groupController.get('/:id/member', authenticateToken, async (req, res, next) => {
+    try {
+        const groupId = parseInt(req.params.id, 10);
+        const userId = req.user.id;
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ error: 'Invalid group ID.' });
+        }
+
+        // Service 호출
+        const members = await groupService.getMembers(groupId, userId);
+
+        return res.status(200).json({ members });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
 //동아리 삭제
 groupController.delete('/:id', authenticateToken, async (req, res, next) => {
     try {

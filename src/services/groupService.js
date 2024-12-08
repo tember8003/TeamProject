@@ -346,6 +346,50 @@ async function addMember(groupId, userId, groupData) {
     return await groupRepository.addMember(groupId, userCheck.id);
 }
 
+async function deleteMember(groupId, userId, memberId) {
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    const isAdmin = await groupRepository.findByIdWithAdmin(group.id, userId);
+
+    if (!isAdmin) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403;
+        throw error;
+    }
+
+    // 멤버 삭제
+    return await groupRepository.deleteMember(groupId, memberId);
+}
+
+async function getMembers(groupId, userId) {
+    // 그룹 존재 여부 확인
+    const group = await groupRepository.findById(groupId);
+
+    if (!group) {
+        const error = new Error('동아리가 존재하지 않습니다.');
+        error.code = 404; // Not Found
+        throw error;
+    }
+
+    // 사용자가 관리자인지 확인
+    const isAdmin = await groupRepository.findByIdWithAdmin(group.id, userId);
+
+    if (!isAdmin) {
+        const error = new Error('권한이 없습니다.');
+        error.code = 403; // Forbidden
+        throw error;
+    }
+
+    // 멤버 목록 조회
+    return await groupRepository.getMembers(groupId);
+}
+
 export default {
     getInfo,
     deleteGroup,
@@ -360,4 +404,6 @@ export default {
     addMember,
     updateRating,
     deleteRating,
+    deleteMember,
+    getMembers,
 }
