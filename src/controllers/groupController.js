@@ -293,7 +293,7 @@ groupController.post('/:id/activity', authenticateToken, uploadAllFiles.single('
     }
 });
 
-groupController.put('/:id/formAdd', authenticateToken, async (req, res, next) => {
+groupController.put('/:id/form', authenticateToken, async (req, res, next) => {
     try {
         const groupId = parseInt(req.params.id, 10);
         const userId = req.user.id;
