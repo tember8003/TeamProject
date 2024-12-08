@@ -395,4 +395,5 @@ export default {
     deleteReview,
     findReviewById,
     deleteMember,
+    getMembers,
 }
