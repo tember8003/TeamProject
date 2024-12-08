@@ -174,18 +174,18 @@ groupController.get('/:id/clubAdmin', authenticateToken, async (req, res, next) 
     }
 });
 
-groupController.delete('/:groupId/review/:reviewId', authenticateToken, async (req, res, next) => {
+groupController.delete('/:groupId/review/:ratingId', authenticateToken, async (req, res, next) => {
     try {
         console.log("리뷰 삭제하러 왔습니다!!");
         const groupId = parseInt(req.params.groupId, 10);
-        const reviewId = parseInt(req.params.reviewId, 10);
+        const ratingId = parseInt(req.params.ratingId, 10);
         const userId = req.user.id;
 
-        if (isNaN(groupId) || isNaN(reviewId)) {
+        if (isNaN(groupId) || isNaN(ratingId)) {
             return res.status(400).json({ error: '유효하지 않은 ID입니다.' });
         }
 
-        const result = await groupService.deleteRating(groupId, reviewId, userId);
+        const result = await groupService.deleteRating(groupId, ratingId, userId);
 
         console.log("리뷰 삭제 성공인 거 같습니다!");
         return res.status(200).json({ message: '후기 삭제 성공', data: result });
@@ -195,16 +195,16 @@ groupController.delete('/:groupId/review/:reviewId', authenticateToken, async (r
     }
 });
 
-groupController.put('/:groupId/review/:reviewId', authenticateToken, async (req, res, next) => {
+groupController.put('/:groupId/review/:ratingId', authenticateToken, async (req, res, next) => {
     try {
         console.log("리뷰 수정하러 왔습니다!!");
         const groupId = parseInt(req.params.groupId, 10);
-        const reviewId = parseInt(req.params.reviewId, 10);
+        const ratingId = parseInt(req.params.ratingId, 10);
         const userId = req.user.id;
 
         const { ratingScore, review, options, date } = req.body;
 
-        if (isNaN(groupId) || isNaN(reviewId)) {
+        if (isNaN(groupId) || isNaN(ratingId)) {
             return res.status(400).json({ error: '유효하지 않은 ID입니다.' });
         }
 
@@ -221,7 +221,7 @@ groupController.put('/:groupId/review/:reviewId', authenticateToken, async (req,
 
         const ratingData = {
             groupId,
-            reviewId,
+            ratingId,
             ratingScore: ratingScore || null,
             review: review || null,
             options: options || null,

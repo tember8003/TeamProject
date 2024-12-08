@@ -80,9 +80,9 @@ function isUserQualifiedForReview(joinDate) {
     }
 }
 
-async function deleteRating(groupId, reviewId, userId) {
+async function deleteRating(groupId, ratingId, userId) {
     // 리뷰 ID로 리뷰 조회
-    const review = await groupRepository.findReviewById(reviewId);
+    const review = await groupRepository.findReviewById(ratingId);
 
     if (!review) {
         const error = new Error("리뷰를 찾을 수 없습니다.");
@@ -98,14 +98,14 @@ async function deleteRating(groupId, reviewId, userId) {
     }
 
     // 리뷰 삭제
-    return await groupRepository.deleteReview(reviewId);
+    return await groupRepository.deleteReview(ratingId);
 }
 
 async function updateRating(ratingData, userId) {
-    const { groupId, reviewId, ratingScore, review, options, createdAt } = ratingData;
+    const { groupId, ratingId, ratingScore, review, options, createdAt } = ratingData;
 
     // 리뷰 ID로 리뷰 조회
-    const existingReview = await groupRepository.findReviewById(reviewId);
+    const existingReview = await groupRepository.findReviewById(ratingId);
 
     if (!existingReview) {
         const error = new Error("리뷰를 찾을 수 없습니다.");
@@ -128,7 +128,7 @@ async function updateRating(ratingData, userId) {
         createdAt: createdAt || existingReview.createdAt,
     };
 
-    return await groupRepository.updateReview(reviewId, updatedReview);
+    return await groupRepository.updateReview(ratingId, updatedReview);
 }
 
 

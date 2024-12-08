@@ -303,31 +303,30 @@ async function addMember(groupId, userId) {
     });
 }
 
-async function deleteReview(reviewId) {
+async function deleteReview(ratingId) {
     return prisma.rating.delete({
         where: {
-            ratingId: reviewId,
+            ratingId: ratingId,
         },
     });
 }
 
-async function updateReview(reviewId, updatedReview) {
+async function updateReview(ratingId, updatedReview) {
     return prisma.rating.update({
         where: {
-            ratingId: reviewId,
+            ratingId: ratingId,
         },
         data: updatedReview,
     });
 }
 
-async function findReviewById(reviewId) {
+async function findReviewById(ratingId) {
     return prisma.rating.findUnique({
         where: {
-            ratingId: reviewId,
+            ratingId: ratingId,
         },
     });
 }
-
 export default {
     findGroupsByCategories,
     findByName,
