@@ -257,6 +257,7 @@ userController.get('/main', async (req, res, next) => {
         const groups = await userService.getGroup(category, sortBy);
 
         console.log("내 카테고리야");
+        console.log(sortBy);
         console.log(category);
         console.log("동아리 목록 찾았어!");
         console.log(groups);
