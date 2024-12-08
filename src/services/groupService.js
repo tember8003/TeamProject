@@ -80,6 +80,58 @@ function isUserQualifiedForReview(joinDate) {
     }
 }
 
+async function deleteRating(groupId, reviewId, userId) {
+    // 리뷰 ID로 리뷰 조회
+    const review = await groupRepository.findReviewById(reviewId);
+
+    if (!review) {
+        const error = new Error("리뷰를 찾을 수 없습니다.");
+        error.statusCode = 404; // Not Found
+        throw error;
+    }
+
+    // 그룹 ID와 리뷰 작성자 확인
+    if (review.groupId !== groupId || review.userId !== userId) {
+        const error = new Error("리뷰를 삭제할 권한이 없습니다.");
+        error.statusCode = 403; // Forbidden
+        throw error;
+    }
+
+    // 리뷰 삭제
+    return await groupRepository.deleteReview(reviewId);
+}
+
+async function updateRating(ratingData, userId) {
+    const { groupId, reviewId, ratingScore, review, options, createdAt } = ratingData;
+
+    // 리뷰 ID로 리뷰 조회
+    const existingReview = await groupRepository.findReviewById(reviewId);
+
+    if (!existingReview) {
+        const error = new Error("리뷰를 찾을 수 없습니다.");
+        error.statusCode = 404; // Not Found
+        throw error;
+    }
+
+    // 그룹 ID와 리뷰 작성자 확인
+    if (existingReview.groupId !== groupId || existingReview.userId !== userId) {
+        const error = new Error("리뷰를 수정할 권한이 없습니다.");
+        error.statusCode = 403; // Forbidden
+        throw error;
+    }
+
+    // 리뷰 업데이트
+    const updatedReview = {
+        ratingScore: ratingScore || existingReview.ratingScore,
+        review: review || existingReview.review,
+        options: options || existingReview.options,
+        createdAt: createdAt || existingReview.createdAt,
+    };
+
+    return await groupRepository.updateReview(reviewId, updatedReview);
+}
+
+
 //후기 등록
 async function postRating(ratingData, userId) {
     const group = await groupRepository.findById(ratingData.groupId);
@@ -306,4 +358,6 @@ export default {
     addForm,
     getForm,
     addMember,
+    updateRating,
+    deleteRating,
 }

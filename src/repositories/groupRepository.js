@@ -303,6 +303,31 @@ async function addMember(groupId, userId) {
     });
 }
 
+async function deleteReview(reviewId) {
+    return prisma.rating.delete({
+        where: {
+            ratingId: reviewId,
+        },
+    });
+}
+
+async function updateReview(reviewId, updatedReview) {
+    return prisma.rating.update({
+        where: {
+            ratingId: reviewId,
+        },
+        data: updatedReview,
+    });
+}
+
+async function findReviewById(reviewId) {
+    return prisma.rating.findUnique({
+        where: {
+            ratingId: reviewId,
+        },
+    });
+}
+
 export default {
     findGroupsByCategories,
     findByName,
@@ -322,4 +347,7 @@ export default {
     addForm,
     getForm,
     addMember,
+    updateReview,
+    deleteReview,
+    findReviewById,
 }

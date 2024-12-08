@@ -79,6 +79,8 @@ const uploadAllFiles = multer({
     fileFilter: fileFilter
 });
 
+
+
 //동아리 내용 수정 (기본적인 이름,설명,이미지,태그,카테고리만 등록됨) - 후기 내용 추가해야 함. (테스트 아직 X)
 groupController.put('/:id', uploadAllFiles.fields([
     { name: 'GroupImage' },
@@ -168,6 +170,70 @@ groupController.get('/:id/clubAdmin', authenticateToken, async (req, res, next) 
         if (error.code === 403) {
             console.log("권한이 없습니다!");
         }
+        next(error);
+    }
+});
+
+groupController.delete('/:groupId/review/:reviewId', authenticateToken, async (req, res, next) => {
+    try {
+        console.log("리뷰 삭제하러 왔습니다!!");
+        const groupId = parseInt(req.params.groupId, 10);
+        const reviewId = parseInt(req.params.reviewId, 10);
+        const userId = req.user.id;
+
+        if (isNaN(groupId) || isNaN(reviewId)) {
+            return res.status(400).json({ error: '유효하지 않은 ID입니다.' });
+        }
+
+        const result = await groupService.deleteRating(groupId, reviewId, userId);
+
+        console.log("리뷰 삭제 성공인 거 같습니다!");
+        return res.status(200).json({ message: '후기 삭제 성공', data: result });
+    } catch (error) {
+        console.log("리뷰 삭제 실패했습니다..");
+        next(error);
+    }
+});
+
+groupController.put('/:groupId/review/:reviewId', authenticateToken, async (req, res, next) => {
+    try {
+        console.log("리뷰 수정하러 왔습니다!!");
+        const groupId = parseInt(req.params.groupId, 10);
+        const reviewId = parseInt(req.params.reviewId, 10);
+        const userId = req.user.id;
+
+        const { ratingScore, review, options, date } = req.body;
+
+        if (isNaN(groupId) || isNaN(reviewId)) {
+            return res.status(400).json({ error: '유효하지 않은 ID입니다.' });
+        }
+
+        // 날짜 검증 및 변환
+        let reviewDate;
+        try {
+            reviewDate = new Date(date);
+            if (isNaN(reviewDate.getTime())) {
+                reviewDate = new Date(date.replace('.', '-').replace('오후', 'PM').replace('오전', 'AM'));
+            }
+        } catch (error) {
+            return res.status(400).json({ error: '유효한 날짜 형식이 아닙니다.' });
+        }
+
+        const ratingData = {
+            groupId,
+            reviewId,
+            ratingScore: ratingScore || null,
+            review: review || null,
+            options: options || null,
+            createdAt: reviewDate.toISOString(),
+        };
+
+        const result = await groupService.updateRating(ratingData, userId);
+
+        console.log("리뷰 수정 성공인 거 같습니다!");
+        return res.status(200).json({ message: '후기 수정 성공', data: result });
+    } catch (error) {
+        console.log("리뷰 수정 실패했습니다..");
         next(error);
     }
 });
