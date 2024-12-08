@@ -1,4 +1,4 @@
-import prisma from "../config/prisma.js";
+import prisma from '../config/prisma.js';
 import bcrypt from 'bcrypt';
 
 async function findGroupsByCategories(categories) {
@@ -154,7 +154,6 @@ async function postQuestion(questionData) {
 
 // 후기 작성과 평균 별점 업데이트를 트랜잭션으로 처리
 async function createRatingAndUpdateGroup(ratingData, userId, newTotalCount, newAverageScore) {
-    const prisma = require('../prismaClient'); // Prisma 클라이언트
 
     return await prisma.$transaction(async (tx) => {
         // 후기 작성
@@ -279,49 +278,29 @@ async function addForm(groupId, form) {
     });
 }
 
+
 async function addMember(groupId, userId) {
-    const prisma = require('../prismaClient'); // Prisma 클라이언트
-
-    try {
-        return await prisma.$transaction(async (prisma) => {
-            // 기존 관계가 이미 있는지 확인
-            const existingMember = await prisma.userGroup.findUnique({
-                where: {
-                    userId_groupId: {
-                        userId: userId,
-                        groupId: groupId,
-                    },
-                },
-            });
-
-            if (existingMember) {
-                const error = new Error('유저가 이미 이 동아리에 가입되어 있습니다.');
-                error.statusCode = 409; // Conflict
-                throw error;
-            }
-
-            // 새로운 멤버 추가
-            await prisma.userGroup.create({
-                data: {
-                    groupId: groupId,
-                    userId: userId,
-                },
-            });
-
-            // 동아리의 MemberNum +1 업데이트
-            const updatedGroup = await prisma.group.update({
-                where: { id: groupId },
-                data: {
-                    memberNum: { increment: 1 }, // Prisma의 `increment` 연산 사용
-                },
-            });
-
-            return updatedGroup;
+    return prisma.$transaction(async (tx) => {
+        // Check if the user is already a member
+        const existingMember = await tx.userGroup.findUnique({
+            where: { userId_groupId: { userId, groupId } },
         });
-    } catch (error) {
-        console.error('멤버 추가 중 오류 발생:', error.message);
-        throw new Error('멤버 추가 중 오류가 발생했습니다: ' + error.message);
-    }
+
+        if (existingMember) {
+            throw new Error('User is already a member of this group.');
+        }
+
+        // Add the new member
+        await tx.userGroup.create({
+            data: { groupId, userId },
+        });
+
+        // Increment the member count
+        return await tx.group.update({
+            where: { id: groupId },
+            data: { memberNum: { increment: 1 } },
+        });
+    });
 }
 
 export default {
