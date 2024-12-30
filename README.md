@@ -18,6 +18,25 @@
 * 박성식: UI 구현 담당, 프론트엔드 개발 담당
 * 김채희: UI 구현 담당, 프론트엔드 개발 담당
 
+## 🚀  Stacks
+![전체](https://github.com/user-attachments/assets/a2fd3550-4a6e-44eb-b07f-b10ebe37a780)
+
+**백엔드**
+* Node.js
+* Express.js
+
+**프론트엔드**
+* HTML + CSS + JavaScript
+* React
+
+**데이터베이스**
+* postgreSQL
+
+**협업용 Tools**
+* Notion
+* GitHub
+* Discord
+
 ## 📖프로젝트 개요
 
 * **여러 SNS에서 동아리 정보만을 찾기 어렵다는 점을 통해, 동아리 정보만을 모아둔 하나의 웹을 만드는 것을 목표로 함.**
@@ -25,7 +44,13 @@
 * 해싱, 암호화 작업을 구현하여 실제 학생들이 안전하게 사용할 수 있도록 보안 기능을 구현함.
 
 ## 프로젝트 최종 성과
+**발표 자료를 참고해주세요! 👍**
 [팀프로젝트 5조 최종 발표 자료.pdf](https://github.com/user-attachments/files/18273862/5.2.pdf)
+
+
+
+
+
 
 
 
