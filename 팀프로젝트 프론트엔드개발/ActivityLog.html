@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>활동 기록 작성</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group textarea {
+            resize: none;
+        }
+
+        .form-group input[type="file"] {
+            padding: 5px;
+        }
+
+        .form-group button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>활동 기록 작성</h1>
+        <form id="activity-form" enctype="multipart/form-data">
+            <!-- 제목 입력 -->
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
+            </div>
+
+            <!-- 내용 입력 -->
+            <div class="form-group">
+                <label for="description">내용</label>
+                <textarea id="description" name="description" rows="5" placeholder="내용을 입력하세요" required></textarea>
+            </div>
+
+            <!-- 이미지 업로드 -->
+            <div class="form-group">
+                <label for="ActivityImage">이미지 업로드</label>
+                <input type="file" id="ActivityImage" name="ActivityImage" accept="image/*">
+            </div>
+
+            <!-- 작성 버튼 -->
+            <div class="form-group">
+                <button type="submit" id="submit-button">글 작성</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // URL에서 groupId 추출
+        function getGroupId() {
+            const currentURL = window.location.pathname;
+            const pathParts = currentURL.split('/');
+            return pathParts[2]; // '/introduceclub/<group_id>'에서 <group_id> 추출
+        }
+
+        // 폼 제출 이벤트 핸들러
+        document.getElementById("activity-form").addEventListener("submit", async function (e) {
+            e.preventDefault(); // 기본 폼 제출 동작 방지
+
+            const formData = new FormData(this);
+            const groupId = getGroupId();
+            // FormData 내용 확인 (디버깅용)
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+
+            try {
+                const response = await fetch(`/introduceclub/${groupId}/ActivityLog`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('활동 기록이 성공적으로 작성되었습니다!');
+                    window.location.href = `/introduceclub/${groupId}`; // 동아리 페이지로 이동
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message || '작성 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('서버와의 통신 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+
+</html>

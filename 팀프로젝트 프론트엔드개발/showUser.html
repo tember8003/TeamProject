@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가입 신청한 회원 확인 (임시)</title>
+    <style>
+        main {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: lavender;
+            width: 400px;
+            height: 250px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            margin-left: 40px;
+        }
+
+        .user-name,
+        .student-number {
+            width: 230px;
+            height: 30px;
+            font-size: 18px;
+            margin-bottom: 10px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 5px;
+            background: rgb(255, 255, 255);
+        }
+
+        .user-name:focus,
+        .student-number:focus {
+            outline: none;
+        }
+
+        button {
+            font-weight: bold;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgb(52, 86, 255);
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        button:hover {
+            background-color: rgb(0, 41, 248);
+        }
+
+        .result-msg {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h2>가입 신청 회원 확인 (임시)</h2>
+        <label for="name">이름</label>
+        <input type="text" id="name" class="user-name" placeholder="이름을 입력하세요."><br>
+        <label for="stunum">학번</label>
+        <input type="text" id="stunum" class="student-number" placeholder="학번을 입력하세요."><br>
+        <button id="submit">저장하기</button>
+        <div class="result-msg" id="result-msg"></div>
+    </main>
+    <script>
+        document.getElementById('submit').addEventListener('click', () => {
+            const groupId = window.location.pathname.split('/')[2];
+            const name = document.getElementById('name').value.trim();
+            const studentNb = document.getElementById('stunum').value.trim();
+
+            if (!name || !studentNb) {
+                alert('이름과 학번을 모두 입력해주세요.');
+                return;
+            }
+
+            fetch(`/introduceclub/${groupId}/member`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, studentNb }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('저장되었습니다.');
+                        document.getElementById('name').value = '';
+                        document.getElementById('stunum').value = '';
+                    } else {
+                        alert(data.message || '저장에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('저장 요청 실패:', error);
+                    alert('저장 요청 중 오류가 발생했습니다.');
+                });
+        });
+    </script>
+</body>
+
+</html>

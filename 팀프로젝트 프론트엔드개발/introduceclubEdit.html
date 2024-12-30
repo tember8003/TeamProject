@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동아리 소개 수정 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .register-form-container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 40px;
+        }
+
+        .club-info {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #image-preview img {
+            display: block;
+            margin: 10px 0;
+            max-width: 300px;
+        }
+
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="register-form-container">
+        <h2>동아리 소개 수정</h2>
+        <form id="club-register-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="club-name">동아리 이름:</label>
+                <input type="text" id="club-name" name="club_name" value="{{ club.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="club-leader">동아리 회장:</label>
+                <input type="text" id="club-leader" name="club_leader" value="{{ club.GroupLeader }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="club-room">동아리방 위치:</label>
+                <input type="text" id="club-room" name="club_room" value="{{ club.GroupRoom }}">
+            </div>
+
+            <div class="form-group">
+                <label for="meeting-time">모임 시간:</label>
+                <input type="text" id="meeting-time" name="meeting_time" value="{{ club.GroupTime }}">
+            </div>
+
+            <div class="form-group">
+                <label for="contact">연락처:</label>
+                <input type="tel" id="contact" name="contact" value="{{ club.Contact }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">동아리 카테고리:</label>
+                <select id="category" name="category" required>
+                    <option value="학술" {% if club.category=='학술' %}selected{% endif %}>학술</option>
+                    <option value="공연" {% if club.category=='공연' %}selected{% endif %}>공연</option>
+                    <option value="봉사" {% if club.category=='봉사' %}selected{% endif %}>봉사</option>
+                    <option value="운동" {% if club.category=='운동' %}selected{% endif %}>운동</option>
+                    <option value="취미" {% if club.category=='취미' %}selected{% endif %}>취미</option>
+                    <option value="종교" {% if club.category=='종교' %}selected{% endif %}>종교</option>
+                    <option value="기타" {% if club.category=='기타' %}selected{% endif %}>기타</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="club-description">동아리 소개:</label>
+                <textarea id="club-description" name="club_description" rows="4">{{ club.description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="description-image">동아리 소개 이미지:</label>
+                <input type="file" id="description-image" name="description_image" accept="image/*">
+                <div id="description-image-preview">
+                    {% if club.IntroduceImage %}
+                    <img src="{{ club.IntroduceImage }}" alt="동아리 소개 이미지">
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="club-image">동아리 대표 사진:</label>
+                <input type="file" id="club-image" name="club_image" accept="image/*">
+                <div id="image-preview">
+                    {% if club.GroupImage %}
+                    <img src="{{ club.GroupImage }}" alt="동아리 대표 사진">
+                    {% endif %}
+                </div>
+            </div>
+
+            <button type="button" id="save-button" class="submit-button">수정사항 저장</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('save-button').addEventListener('click', async () => {
+            const groupId = window.location.pathname.split('/')[2]; // URL에서 groupId 추출
+
+            // FormData 객체 생성
+            const formData = new FormData();
+            formData.append('name', document.getElementById('club-name').value);
+            formData.append('GroupLeader', document.getElementById('club-leader').value);
+            formData.append('GroupRoom', document.getElementById('club-room').value);
+            formData.append('GroupTime', document.getElementById('meeting-time').value);
+            formData.append('Contact', document.getElementById('contact').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('description', document.getElementById('club-description').value);
+
+            // 파일 추가
+            const descriptionImage = document.getElementById('description-image').files[0];
+            const clubImage = document.getElementById('club-image').files[0];
+
+            if (descriptionImage) {
+                formData.append('IntroduceImage', descriptionImage);
+            }
+            if (clubImage) {
+                formData.append('GroupImage', clubImage);
+            }
+
+
+            try {
+                // PUT 요청으로 FormData 전송
+                const response = await fetch(`/introduceclub/${groupId}/edit`, {
+                    method: 'PUT',
+                    body: formData // Content-Type은 자동 설정
+                });
+
+                if (!response.ok) {
+                    throw new Error(`서버 응답 오류: ${response.status}`);
+                }
+
+                const result = await response.json();
+                alert(result.message || '수정이 완료되었습니다.');
+            } catch (error) {
+                console.error('수정 오류:', error);
+                alert('수정 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+
+</html>

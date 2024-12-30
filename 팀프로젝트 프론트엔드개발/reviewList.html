@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 목록</title>
+    <link rel="stylesheet" href="/introduceclub/reviewList.css">
+    <script src="/introduceclub/reviewList.js" defer></script>
+    <script src="https://kit.fontawesome.com/ce8994702e.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <main>
+        <!-- 리뷰 작성 버튼: group_id를 URL에 포함 -->
+        <button class="newReview"
+            onclick="location.href=`/introduceclub/${window.location.pathname.split('/')[2]}/reviewWrite`">
+            리뷰 작성
+        </button>
+        <h2>리뷰 목록</h2>
+        <div class="overall-rating">
+            <span id="average-rating"></span>
+            <span id="average-stars"></span>
+        </div>
+        <ul id="review-list"></ul>
+    </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    padding-top: 50px;
+}
+
+.form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.form-header {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    width: 100%;
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    border: none;
+    background: none;
+}
+
+.form-title:focus {
+    outline: none;
+}
+
+#description {
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    background: none;
+    margin-top: 5px;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
+
+#description:focus {
+    outline: none;
+}
+
+.form-items {
+    text-align: left;
+}
+
+.form-item {
+    margin-bottom: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+}
+
+.form-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 18px;
+    border: none;
+    background: none;
+    flex-grow: 1;
+}
+
+.form-question:focus {
+    outline: none;
+}
+
+.form-answer {
+    padding: 10px 0;
+    font-size: 14px;
+    color: #888;
+    border-top: 1px solid #ddd;
+}
+
+.add-btn {
+    font-size: 25px;
+    padding: 5px 15px;
+    border-radius: 50%;
+}
+
+.submit-btn {
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+button {
+    background-color: rgba(128, 128, 128, 0.662);
+    color: rgb(81, 79, 79);
+    font-weight: bold;
+    padding: 5px 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: gray;
+    transition: background-color 0.3s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* userForm페이지의 답변 */
+.form-answer-input {
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    background: none;
+    margin-top: 5px;
+    padding: 10px 0;
+}
+
+.form-answer-input:focus {
+    outline: none;
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .member-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .member-item:last-child {
+            border-bottom: none;
+        }
+
+        .member-item span {
+            font-size: 16px;
+        }
+
+        .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff0000;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>회원 목록</h1>
+        <ul class="member-list">
+            {% if members and members|length > 0 %}
+            {% for member in members %}
+            <li class="member-item">
+                <span>{{ member.name }} ({{ member.userNum }})</span>
+                <button class="delete-btn" data-id="{{ member.id }}">삭제</button>
+            </li>
+            {% endfor %}
+            {% else %}
+            <li>등록된 회원이 없습니다.</li>
+            {% endif %}
+        </ul>
+    </main>
+
+    <script>
+        const groupId = "{{ group_id }}";
+
+        // 회원 삭제 요청
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const memberId = event.target.getAttribute('data-id');
+
+                try {
+                    const response = await fetch(`/introduceclub/${groupId}/member/${memberId}`, {
+                        method: 'DELETE',
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('회원이 삭제되었습니다.');
+                        location.reload(); // 페이지 새로고침
+                    } else {
+                        throw new Error(data.message || '회원 삭제에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('회원 삭제 요청 실패:', error);
+                    alert(error.message || '회원 삭제 요청 중 오류가 발생했습니다.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

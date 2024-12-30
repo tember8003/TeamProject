@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 작성 페이지</title>
+    <link rel="stylesheet" href="/introduceclub/reviewWrite.css">
+    <script src="/introduceclub/reviewWrite.js"></script>
+    <script src="https://kit.fontawesome.com/ce8994702e.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <main>
+        <h2>리뷰 작성 페이지</h2>
+        <div class="star-rating">
+            <!-- 기본적으로 비활성화 상태 -->
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <span class="rating-value">0/5</span>
+        </div>
+        <textarea class="text-review" placeholder="동아리 후기 내용을 작성해주세요."></textarea><br>
+        <input type="checkbox" name="lot-meetings" value="모임이 많아요">
+        <label for="lot-meetings">모임이 많아요</label><br>
+        <input type="checkbox" name="lot-senior" value="고학년이 많아요">
+        <label for="lot-senior">고학년이 많아요</label><br>
+        <input type="checkbox" name="lot-drink" value="술자리가 많아요">
+        <label for="lot-drink">술자리가 많아요</label><br>
+        <input type="checkbox" name="lot-fees" value="회비가 비싸요">
+        <label for="lot-fees">회비가 비싸요</label><br>
+
+        <input type="submit" class="review-upload" value="리뷰 등록">
+    </main>
+</body>
+
+</html>

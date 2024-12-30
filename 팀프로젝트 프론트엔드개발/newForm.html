@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        main {
+            width: 400px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        #form-link {
+            width: 400px;
+            box-sizing: border-box;
+            background: rgb(212, 212, 212);
+            border: 0;
+            border-radius: 10px;
+            height: 100px;
+            resize: none;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgb(52, 86, 255);
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: rgb(0, 41, 248);
+        }
+
+        .result-msg {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h2>동아리 가입 폼</h2>
+        <textarea id="form-link" placeholder="동아리 가입 구글 폼 링크를 입력하세요."></textarea>
+        <button id="submit">저장하기</button>
+        <div class="result-msg" id="result-msg"></div>
+    </main>
+    <script>
+        document.getElementById('submit').addEventListener('click', async function () {
+            const formLink = document.getElementById('form-link').value.trim();
+            const groupId = window.location.pathname.split('/')[2]; // URL에서 groupId 추출
+
+            // 링크가 입력되었는지 확인
+            if (!formLink) {
+                displayMessage('구글 폼 링크를 입력해주세요.', 'error');
+                return;
+            }
+
+            // 유효한 URL인지 확인 (간단한 검증)
+            const urlPattern = /^(https?:\/\/)?(www\.)?docs\.google\.com\/forms\/.+$/;
+            if (!urlPattern.test(formLink)) {
+                displayMessage('유효한 구글 폼 링크를 입력해주세요.', 'error');
+                return;
+            }
+
+            try {
+                // PUT 요청으로 구글 폼 링크 전송
+                const response = await fetch(`/introduceclub/${groupId}/manageForm`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ form: formLink }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    displayMessage('구글 폼 링크가 성공적으로 저장되었습니다!', 'success');
+                    document.getElementById('form-link').value = ''; // 입력 필드 초기화
+                } else {
+                    displayMessage(data.message || '서버 오류가 발생했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('폼 저장 중 오류 발생:', error);
+                displayMessage('폼 저장 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+            }
+        });
+
+        // 결과 메시지 표시
+        function displayMessage(text, type) {
+            const messageElement = document.getElementById('result-msg');
+            messageElement.textContent = text;
+
+            if (type === 'success') {
+                messageElement.style.color = 'green';
+            } else {
+                messageElement.style.color = 'red';
+            }
+        }
+    </script>
+</body>
+
+</html>

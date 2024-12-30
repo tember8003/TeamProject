@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가입 설문 생성(관리자 페이지)</title>
+    <link rel="stylesheet" href="form.css">
+    <script src="form.js"></script>
+</head>
+
+<body>
+    <main class="form">
+        <div class="form-header">
+            <input type="text" id="title" class="form-title" placeholder="설문지 제목을 입력하세요."><br>
+            <input type="text" id="description" placeholder="설문지 설명을 입력하세요."></input>
+        </div>
+
+        <div id="items" class="form-items">
+            <div class="form-item">
+                <div class="question-box">
+                    <input type="text" class="form-question" id="question" placeholder="질문을 입력하세요.">
+                </div>
+                <div class="form-answer">
+                    <span>답변이 여기에 표시됩니다.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button id="add-question" class="add-btn">+</button>
+            <button id="submit" class="submit-btn">설문 제출</button>
+        </div>
+    </main>
+</body>
+
+</html>

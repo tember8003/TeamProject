@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 동아리 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 170px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 0;
+            margin: 5px 0;
+            z-index: 1000;
+        }
+
+        .dropdown-menu li {
+            list-style: none;
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .dropdown-menu li:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu li:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown.open .dropdown-menu {
+            display: block;
+        }
+
+        .empty-message {
+            padding: 10px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dropdown" id="clubDropdown">
+        <div class="dropdown-toggle">내 동아리 목록 <span>(0)</span> ▾</div>
+        <ul class="dropdown-menu">
+            <li class="empty-message">가입된 동아리가 없습니다.</li>
+        </ul>
+    </div>
+
+    <script>
+        const dropdown = document.getElementById('clubDropdown');
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+        const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+
+        // 임시 데이터
+        const clubs = ["동아리 A", "동아리 B", "동아리 C"];
+
+        dropdownToggle.addEventListener('click', () => {
+            dropdown.classList.toggle('open');
+        });
+
+        const populateClubs = () => {
+            dropdownMenu.innerHTML = "";
+            if (clubs.length === 0) {
+                const emptyMessage = document.createElement('li');
+                emptyMessage.classList.add('empty-message');
+                emptyMessage.textContent = "가입된 동아리가 없습니다.";
+                dropdownMenu.appendChild(emptyMessage);
+            } else {
+                clubs.forEach(club => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = club;
+                    dropdownMenu.appendChild(listItem);
+                });
+                dropdownToggle.querySelector('span').textContent = `(${clubs.length})`;
+            }
+        };
+
+        populateClubs();
+    </script>
+</body>
+
+</html>
