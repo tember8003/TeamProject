@@ -19,7 +19,7 @@
 * 김채희: UI 구현 담당, 프론트엔드 개발 담당
 
 ## 🚀  Stacks
-![전체](https://github.com/user-attachments/assets/a2fd3550-4a6e-44eb-b07f-b10ebe37a780)
+<img src = "https://github.com/user-attachments/assets/df75d56b-2dd8-4d58-be35-c6c1b02384ff" width = 700px>
 
 **백엔드**
 * Node.js
